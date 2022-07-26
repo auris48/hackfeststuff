@@ -51,11 +51,12 @@ public class ItemDAO implements Dao<Item> {
     public Item create(Item item) {
         try (Connection connection = DBUtils.getInstance().getConnection();
              PreparedStatement statement = connection
-                     .prepareStatement("INSERT INTO items(item_name, item_stockdate, item_description, item_price) VALUES (?, ?, ?, ?)")) {
+                     .prepareStatement("INSERT INTO items(item_name, item_stockdate, item_description, item_price) VALUES (?, ?, ?, ?, ?)")) {
             statement.setString(1, item.getItemName());
             statement.setString(2, item.getItemStockDate().toString());
             statement.setString(3, item.getItemDescription());
-            statement.setString(4, String.valueOf(item.getItemPrice()));
+            statement.setString(4, String.valueOf(item.getItemStock()));
+            statement.setString(5, String.valueOf(item.getItemPrice()));
             statement.executeUpdate();
             return readLatest();
         } catch (Exception e) {
@@ -69,11 +70,12 @@ public class ItemDAO implements Dao<Item> {
     public Item update(Item item) {
         try (Connection connection = DBUtils.getInstance().getConnection();
              PreparedStatement statement = connection
-                     .prepareStatement("UPDATE items SET item_name = ?, item_stockdate = ?, item_description = ?, item_price = ? WHERE id = ?")) {
+                     .prepareStatement("UPDATE items SET item_name = ?, item_stockdate = ?, item_description = ?, item_stock = ? item_price = ? WHERE id = ?")) {
             statement.setString(1, item.getItemName());
             statement.setString(2, item.getItemStockDate().toString());
             statement.setString(3, item.getItemDescription());
-            statement.setString(4, String.valueOf(item.getItemPrice()));
+            statement.setString(4, String.valueOf(item.getItemStock()));
+            statement.setString(5, String.valueOf(item.getItemPrice()));
             statement.executeUpdate();
             return read(item.getId());
         } catch (Exception e) {
@@ -102,8 +104,9 @@ public class ItemDAO implements Dao<Item> {
         String itemName = resultSet.getString("item_name");
         String itemDescription = resultSet.getString("item_description");
         LocalDate itemStockDate = LocalDate.parse(resultSet.getString("item_stockdate"));
-        int itemPrice = resultSet.getInt("item_price");
-        return new Item(id, itemName, itemStockDate, itemDescription, itemPrice);
+        int itemStock = resultSet.getInt("item_stock");
+        double itemPrice = resultSet.getInt("item_price");
+        return new Item(id, itemName, itemStockDate, itemDescription, itemStock, itemPrice);
     }
 
     public Item readLatest() {

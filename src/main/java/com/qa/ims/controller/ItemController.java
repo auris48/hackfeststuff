@@ -43,9 +43,11 @@ public class ItemController implements CrudController<Item> {
 		LocalDate itemStockDate = LocalDate.parse(utils.getString());
 		LOGGER.info("Please enter item description");
 		String itemDescription=utils.getString();;
+		LOGGER.info("Please enter item stock");
+		int itemStock= utils.getInt();
 		LOGGER.info("Please enter item price");
 		double itemPrice= utils.getDouble();
-		Item Item = itemDao.create(new Item(itemName, itemStockDate, itemDescription, itemPrice));
+		Item Item = itemDao.create(new Item(itemName, itemStockDate, itemDescription, itemStock, itemPrice));
 		LOGGER.info("Item created");
 		return Item;
 	}
@@ -60,9 +62,11 @@ public class ItemController implements CrudController<Item> {
 		LocalDate itemStockDate = LocalDate.parse(utils.getString());
 		LOGGER.info("Please enter item description");
 		String itemDescription=utils.getString();;
+		LOGGER.info("Please enter item stock");
+		int itemStock= utils.getInt();
 		LOGGER.info("Please enter item price");
 		double itemPrice= utils.getDouble();
-		Item Item = itemDao.create(new Item(id, itemName, itemStockDate, itemDescription, itemPrice));
+		Item Item = itemDao.create(new Item(id, itemName, itemStockDate, itemDescription, itemStock, itemPrice));
 		LOGGER.info("Item created");
 		return Item;
 	}
