@@ -28,21 +28,49 @@ public class ItemController implements CrudController<Item> {
 
 	@Override
 	public List<Item> readAll() {
-		return null;
+		List<Item> Items = itemDao.readAll();
+		for (Item Item : Items) {
+			LOGGER.info(Item);
+		}
+		return Items;
 	}
 
 	@Override
 	public Item create() {
-		return null;
+		LOGGER.info("Please enter item name");
+		String itemName = utils.getString();
+		LOGGER.info("Please enter item stock date");
+		LocalDate itemStockDate = LocalDate.parse(utils.getString());
+		LOGGER.info("Please enter item description");
+		String itemDescription=utils.getString();;
+		LOGGER.info("Please enter item price");
+		double itemPrice= utils.getDouble();
+		Item Item = itemDao.create(new Item(itemName, itemStockDate, itemDescription, itemPrice));
+		LOGGER.info("Item created");
+		return Item;
 	}
 
 	@Override
 	public Item update() {
-		return null;
+		LOGGER.info("Please enter the id of the Item you would like to update");
+		Long id = utils.getLong();
+		LOGGER.info("Please enter item name");
+		String itemName = utils.getString();
+		LOGGER.info("Please enter item stock date");
+		LocalDate itemStockDate = LocalDate.parse(utils.getString());
+		LOGGER.info("Please enter item description");
+		String itemDescription=utils.getString();;
+		LOGGER.info("Please enter item price");
+		double itemPrice= utils.getDouble();
+		Item Item = itemDao.create(new Item(id, itemName, itemStockDate, itemDescription, itemPrice));
+		LOGGER.info("Item created");
+		return Item;
 	}
 
 	@Override
 	public int delete() {
-		return 0;
+		LOGGER.info("Please enter the id of the Item you would like to delete");
+		Long id = utils.getLong();
+		return itemDao.delete(id);
 	}
 }
