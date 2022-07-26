@@ -20,6 +20,11 @@ public class ItemController implements CrudController<Item> {
 	private ItemDAO itemDao;
 	private Utils utils;
 
+	public ItemController(ItemDAO itemDao, Utils utils) {
+		super();
+		this.itemDao = itemDao;
+		this.utils = utils;
+	}
 
 	@Override
 	public List<Item> readAll() {
