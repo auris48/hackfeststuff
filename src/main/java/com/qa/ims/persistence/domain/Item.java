@@ -18,4 +18,19 @@ public class Item {
         this.itemPrice = itemPrice;
     }
 
+
+
+    public Item(Long id, String itemName, LocalDate itemStockDate, String itemDescription, double itemPrice) {
+        this.id = id;
+        this.itemName = itemName;
+        this.itemStockDate = itemStockDate;
+        this.itemDescription = itemDescription;
+        this.itemPrice = itemPrice;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+
 }
