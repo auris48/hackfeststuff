@@ -35,4 +35,13 @@ public class Item {
         this.id = id;
     }
 
+    public LocalDate getItemStockDate() {
+        return itemStockDate;
+    }
+
+    public void setItemStockDate(LocalDate itemStockDate) {
+        this.itemStockDate = itemStockDate;
+    }
+
+
 }
