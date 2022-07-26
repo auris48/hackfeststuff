@@ -50,5 +50,14 @@ public class Item {
         this.itemDescription = itemDescription;
     }
 
+    public double getItemPrice() {
+        return itemPrice;
+    }
+
+    public void setItemPrice(double itemPrice) {
+        this.itemPrice = itemPrice;
+    }
+
+
 
 }
