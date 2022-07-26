@@ -1,7 +1,5 @@
 package com.qa.ims.persistence.domain;
 
-import jdk.vm.ci.meta.Local;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +19,7 @@ public class Order {
     }
 
 
-
-    public Order(Long id, String itemName, LocalDate itemStockDate, String itemDescription, int itemStock, double itemPrice) {
+    public Order(Long id, Long customer_id, LocalDate orderDate, LocalDate orderDueDate) {
         this.id=id;
         this.customer_id=customer_id;
         this.orderDate=orderDate;
@@ -69,4 +66,25 @@ public class Order {
 
     }
 
+    public Map<Item, Integer> getOrderDetail() {
+        return orderDetail;
+    }
+
+
+    public void setOrderDetail(Map<Item, Integer> orderDetail) {
+        this.orderDetail = orderDetail;
+    }
+
+    public double getOrderCost() {
+        return orderCost;
+    }
+
+    public void setOrderCost(double orderCost) {
+        this.orderCost = orderCost;
+    }
+
+    public void calculateOrderCost() {
+        orderDetail.keySet().stream().forEach(item -> orderCost+=item.getItemPrice()*orderDetail.get(item));
+        this.orderCost = orderCost;
+    }
 }
