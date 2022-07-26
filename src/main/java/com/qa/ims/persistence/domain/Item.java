@@ -42,6 +42,13 @@ public class Item {
     public void setItemStockDate(LocalDate itemStockDate) {
         this.itemStockDate = itemStockDate;
     }
+    public String getItemDescription() {
+        return itemDescription;
+    }
+
+    public void setItemDescription(String itemDescription) {
+        this.itemDescription = itemDescription;
+    }
 
 
 }
