@@ -111,7 +111,7 @@ public class ItemDAO implements Dao<Item> {
         String itemDescription = resultSet.getString("item_description");
         LocalDate itemStockDate = LocalDate.parse(resultSet.getString("item_stockdate"));
         int itemStock = resultSet.getInt("item_stock");
-        double itemPrice = resultSet.getInt("item_price");
+        double itemPrice = resultSet.getDouble("item_price");
         return new Item(id, itemName, itemStockDate, itemDescription, itemStock, itemPrice);
     }
 

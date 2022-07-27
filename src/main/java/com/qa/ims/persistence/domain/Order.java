@@ -17,7 +17,6 @@ public class Order {
     private LocalDate orderDate;
     private LocalDate orderDueDate;
     private Map<Item, Integer> orderDetail=new HashMap<>();
-    private List<OrderDetail> orderDetailList;
     private double orderCost;
 
 
@@ -25,7 +24,6 @@ public class Order {
         this.customerID=customer_id;
         this.orderDate=orderDate;
         this.orderDueDate=orderDueDate;
-        this.orderDetailList=new ArrayList<>();
 
     }
 

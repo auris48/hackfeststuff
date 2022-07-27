@@ -61,7 +61,6 @@ public class OrderController implements CrudController<Order> {
     public Order addItemsToOrder(Order order) {
         boolean adding = true;
         Map<Item, Integer> orderDetail = new HashMap<>();
-        List<OrderDetail> orderDetailList = new ArrayList<>();
         while (adding) {
             itemDao.readAll().forEach(item -> System.out.println(item.toString()));
             LOGGER.info("Please enter ID of item to add to the order");
@@ -71,6 +70,7 @@ public class OrderController implements CrudController<Order> {
             int quantity = utils.getInt();
             if (item.getItemStock() >= quantity) {
                 if (item.getItemStock() == quantity){
+                    item.setItemStock(0);
                     itemDao.update(item);
                     orderDetail.put(item, quantity);
                 } else{
@@ -104,12 +104,9 @@ public class OrderController implements CrudController<Order> {
         LocalDate orderDueDate = LocalDate.parse(utils.getString());;
         Order order = orderDao.update(new Order(id, customerID, orderStockDate, orderDueDate));
         LOGGER.info("Order updated");
-
         LOGGER.info("Would you like to update items belonging to order? Yes/No");
         if (utils.getString().equalsIgnoreCase("Yes")) {
-            System.out.println("Here are all items belonging to this order: ");
-            order.printOrderDetails();
-
+            updateOrderDetails(order);
         }
 
 
@@ -121,6 +118,8 @@ public class OrderController implements CrudController<Order> {
         if (utils.getString().equalsIgnoreCase("Add")){
             addItemsToOrder(order);
         } else {
+            LOGGER.info("Here are all items belonging to this order: ");
+            order.printOrderDetails();
             LOGGER.info("Please enter item id");
             Long itemID = utils.getLong();
             LOGGER.info("Would you like to delete item or change quantity? (Delete/Change)");

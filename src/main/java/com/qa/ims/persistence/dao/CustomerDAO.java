@@ -1,10 +1,6 @@
 package com.qa.ims.persistence.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +19,7 @@ public class CustomerDAO implements Dao<Customer> {
 		Long id = resultSet.getLong("id");
 		String firstName = resultSet.getString("first_name");
 		String surname = resultSet.getString("surname");
+
 		return new Customer(id, firstName, surname);
 	}
 

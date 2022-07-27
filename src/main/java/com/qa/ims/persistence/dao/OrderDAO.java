@@ -32,6 +32,28 @@ public class OrderDAO implements Dao<Order> {
         }
         return new ArrayList<>();
     }
+    public List<Order> returnOrdersWithCustomerID(Long id) {
+        List<Order> orders=new ArrayList<>();
+
+        try (Connection connection = DBUtils.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM orders WHERE customer_id = ?")) {
+            statement.setLong(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while(resultSet.next()){
+                    Order order = modelFromResultSet(resultSet);
+                    order.setOrderDetail(readOrderDetails(order));
+                    orders.add(order);
+                };
+
+                return orders;
+            }
+
+        } catch (SQLException e) {
+            LOGGER.debug(e);
+            LOGGER.error(e.getMessage());
+        }
+        return new ArrayList<>();
+    }
 
     @Override
     public Order read(Long id) {
