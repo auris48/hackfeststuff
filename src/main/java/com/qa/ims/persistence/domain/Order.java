@@ -1,19 +1,20 @@
 package com.qa.ims.persistence.domain;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Order {
     private Long id;
-    private Long customer_id;
+    private Long customerID;
     private LocalDate orderDate;
     private LocalDate orderDueDate;
-    private Map<Item, Integer> orderDetail;
+    private Map<Item, Integer> orderDetail=new HashMap<>();
     private double orderCost;
 
     public Order(Long customer_id, LocalDate orderDate, LocalDate orderDueDate) {
-        this.customer_id=customer_id;
+        this.customerID=customer_id;
         this.orderDate=orderDate;
         this.orderDueDate=orderDueDate;
     }
@@ -21,7 +22,7 @@ public class Order {
 
     public Order(Long id, Long customer_id, LocalDate orderDate, LocalDate orderDueDate) {
         this.id=id;
-        this.customer_id=customer_id;
+        this.customerID=customer_id;
         this.orderDate=orderDate;
         this.orderDueDate=orderDueDate;
     }
@@ -34,12 +35,12 @@ public class Order {
         this.id = id;
     }
 
-    public Long getCustomer_id() {
-        return customer_id;
+    public Long getCustomerID() {
+        return customerID;
     }
 
     public void setCustomer_id(Long customer_id) {
-        this.customer_id = customer_id;
+        this.customerID = customer_id;
     }
 
     public LocalDate getOrderDate() {
@@ -72,7 +73,7 @@ public class Order {
 
 
     public void setOrderDetail(Map<Item, Integer> orderDetail) {
-        this.orderDetail = orderDetail;
+        this.orderDetail.putAll(orderDetail);
     }
 
     public double getOrderCost() {

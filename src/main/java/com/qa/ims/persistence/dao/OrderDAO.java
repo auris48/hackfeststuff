@@ -8,10 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class OrderDAO implements Dao<Order> {
 
@@ -34,12 +31,10 @@ public class OrderDAO implements Dao<Order> {
         return new ArrayList<>();
     }
 
-
-
     @Override
     public Order read(Long id) {
         try (Connection connection = DBUtils.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement("SELECT * FROM items WHERE id = ?")) {
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM orders WHERE id = ?")) {
             statement.setLong(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 resultSet.next();
@@ -56,8 +51,8 @@ public class OrderDAO implements Dao<Order> {
     public Order create(Order order) {
         try (Connection connection = DBUtils.getInstance().getConnection();
              PreparedStatement statement = connection
-                     .prepareStatement("INSERT INTO order VALUES (?, ?, ?, ?, ?)")) {
-            statement.setString(1, String.valueOf(order.getCustomer_id()));
+                     .prepareStatement("INSERT INTO orders (customer_id, order_date, order_dueDate, order_cost) VALUES (?, ?, ?, ?)")) {
+            statement.setString(1, String.valueOf(order.getCustomerID()));
             statement.setString(2, order.getOrderDate().toString());
             statement.setString(3, order.getOrderDueDate().toString());
             statement.setString(4, String.valueOf(order.getOrderCost()));
@@ -70,7 +65,7 @@ public class OrderDAO implements Dao<Order> {
         return null;
     }
 
-    public Map<Item, Integer> createOrderDetail(Order order) {
+    public void createOrderDetail(Order order) {
         try (Connection connection = DBUtils.getInstance().getConnection();
              PreparedStatement statement = connection
                      .prepareStatement("INSERT INTO order_items VALUES (?, ?, ?)")) {
@@ -82,19 +77,17 @@ public class OrderDAO implements Dao<Order> {
                                   .forEach(item -> {
                                       try {
                                           statement.setString(1, String.valueOf(order.getId()));
-                                          statement.setString(1, String.valueOf(item.getId()));
-                                          statement.setString(2, (String.valueOf(orderDetail.get(item))));
+                                          statement.setString(2, String.valueOf(item.getId()));
+                                          statement.setString(3, (String.valueOf(orderDetail.get(item))));
+                                          statement.executeUpdate();
                                       } catch (SQLException e) {
                                           e.printStackTrace();
                                       }
                                   });
-
-            statement.executeUpdate();
         } catch (Exception e) {
             LOGGER.debug(e);
             LOGGER.error(e.getMessage());
         }
-        return null;
     }
 
 
@@ -135,7 +128,7 @@ public class OrderDAO implements Dao<Order> {
     @Override
     public int delete(long id) {
         try (Connection connection = DBUtils.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement("DELETE FROM items WHERE id = ?")) {
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM orders WHERE id = ?")) {
             statement.setLong(1, id);
             return statement.executeUpdate();
         } catch (Exception e) {
@@ -158,7 +151,7 @@ public class OrderDAO implements Dao<Order> {
         Long id = resultSet.getLong("id");
         Long customerID = resultSet.getLong("customer_id");
         LocalDate orderDate = LocalDate.parse(resultSet.getString("order_date"));
-        LocalDate orderDueDate = LocalDate.parse(resultSet.getString("order_due_date"));;
+        LocalDate orderDueDate = LocalDate.parse(resultSet.getString("order_dueDate"));;
         return new Order(id, customerID, orderDate, orderDueDate);
     }
 

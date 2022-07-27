@@ -27,6 +27,7 @@ public class OrderController implements CrudController<Order> {
     public OrderController(OrderDAO OrderDao, Utils utils) {
         super();
         this.orderDao = OrderDao;
+        this.itemDao=new ItemDAO();
         this.utils = utils;
     }
 
@@ -46,19 +47,17 @@ public class OrderController implements CrudController<Order> {
         LOGGER.info("Please enter order due date");
         LocalDate orderDueDate = LocalDate.parse(utils.getString());
         Order order = orderDao.create(new Order(customerID, LocalDate.now(), orderDueDate));
-        orderDao.create(order);
         LOGGER.info("Would you like to add items to order? Yes/No");
         String input = utils.getString();
-        if (input.equals("Yes")){
-            addItemsToOrder();
-            order.calculateOrderCost();
+        if (input.equalsIgnoreCase("Yes")){
+            addItemsToOrder(order);
             orderDao.createOrderDetail(order);
+            order.calculateOrderCost();
         }
         return order;
-
     }
 
-    public Map<Item, Integer> addItemsToOrder() {
+    public Order addItemsToOrder(Order order) {
         boolean adding = true;
         Map<Item, Integer> orderDetail = new HashMap<>();
         while (adding) {
@@ -79,11 +78,12 @@ public class OrderController implements CrudController<Order> {
             }
 
             LOGGER.info("Would you like to add any more items? Yes/No");
-            if (utils.getString().equals("No")) {
+            if (utils.getString().equalsIgnoreCase("No")) {
                 adding = false;
             }
         }
-        return orderDetail;
+        order.getOrderDetail().putAll(orderDetail);
+        return order;
     }
 
 
