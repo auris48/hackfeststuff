@@ -4,11 +4,13 @@ import com.qa.ims.persistence.dao.ItemDAO;
 import com.qa.ims.persistence.dao.OrderDAO;
 import com.qa.ims.persistence.domain.Item;
 import com.qa.ims.persistence.domain.Order;
+import com.qa.ims.persistence.domain.OrderDetail;
 import com.qa.ims.utils.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +21,6 @@ import java.util.Map;
 public class OrderController implements CrudController<Order> {
 
     public static final Logger LOGGER = LogManager.getLogger();
-
     private OrderDAO orderDao;
     private ItemDAO itemDao;
     private Utils utils;
@@ -60,13 +61,14 @@ public class OrderController implements CrudController<Order> {
     public Order addItemsToOrder(Order order) {
         boolean adding = true;
         Map<Item, Integer> orderDetail = new HashMap<>();
+        List<OrderDetail> orderDetailList = new ArrayList<>();
         while (adding) {
             LOGGER.info("Please enter ID of item to add to the order");
             Long id = utils.getLong();
             Item item = itemDao.read(id);
             LOGGER.info("Please enter quantity");
             int quantity = utils.getInt();
-            if (item.getItemStock() <= quantity) {
+            if (item.getItemStock() >= quantity) {
                 if (item.getItemStock() == quantity){
                     itemDao.delete(item.getId());
                     orderDetail.put(item, quantity);
@@ -75,6 +77,8 @@ public class OrderController implements CrudController<Order> {
                     itemDao.update(item);
                     orderDetail.put(item, quantity);
                 }
+            } else {
+                System.out.println("You're trying to order more than the stock");
             }
 
             LOGGER.info("Would you like to add any more items? Yes/No");
@@ -82,29 +86,32 @@ public class OrderController implements CrudController<Order> {
                 adding = false;
             }
         }
-        order.getOrderDetail().putAll(orderDetail);
+        order.setOrderDetail(orderDetail);
         return order;
     }
 
 
     @Override
     public Order update() {
-        LOGGER.info("Please enter the id of the Order you would like to update");
+        LOGGER.info("Please enter the id of the order you would like to update");
         Long id = utils.getLong();
-        LOGGER.info("Please enter Order name");
-        String OrderName = utils.getString();
-        LOGGER.info("Please enter Order stock date");
-        LocalDate OrderStockDate = LocalDate.parse(utils.getString());
-        LOGGER.info("Please enter Order description");
-        String OrderDescription = utils.getString();
-        ;
-        LOGGER.info("Please enter Order stock");
-        int OrderStock = utils.getInt();
-        LOGGER.info("Please enter Order price");
-        double OrderPrice = utils.getDouble();
-        //Order Order = orderDao.create(new Order(id, OrderName, OrderStockDate, OrderDescription, OrderStock, OrderPrice));
-        LOGGER.info("Order created");
-        return null;
+        LOGGER.info("Please enter customer id");
+        Long customerID = utils.getLong();
+        LOGGER.info("Please enter order stock date");
+        LocalDate orderStockDate = LocalDate.parse(utils.getString());
+        LOGGER.info("Please enter order due date");
+        LocalDate orderDueDate = LocalDate.parse(utils.getString());;
+        Order order = orderDao.update(new Order(id, customerID, orderStockDate, orderDueDate));
+        LOGGER.info("Order updated");
+
+        LOGGER.info("Would you like to update items belonging to order? Yes/No");
+        if (utils.getString().equalsIgnoreCase("Yes")) {
+            System.out.println("Here are all items belonging to this order: ");
+            order.printOrderDetails();
+        }
+
+
+        return order;
     }
 
     @Override

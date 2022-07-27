@@ -66,16 +66,22 @@ public class ItemDAO implements Dao<Item> {
         return null;
     }
 
+
+    //Read this when you wake up: there's an error here somewhere, idk why set up
+    // a breakpoint
+
+
     @Override
     public Item update(Item item) {
         try (Connection connection = DBUtils.getInstance().getConnection();
              PreparedStatement statement = connection
-                     .prepareStatement("UPDATE items SET item_name = ?, item_stockdate = ?, item_description = ?, item_stock = ? item_price = ? WHERE id = ?")) {
+                     .prepareStatement("UPDATE items SET item_name = ?, item_stockdate = ?, item_description = ?, item_stock = ?, item_price = ? WHERE id = ?")) {
             statement.setString(1, item.getItemName());
             statement.setString(2, item.getItemStockDate().toString());
             statement.setString(3, item.getItemDescription());
             statement.setString(4, String.valueOf(item.getItemStock()));
             statement.setString(5, String.valueOf(item.getItemPrice()));
+            statement.setString(6, String.valueOf(item.getId()));
             statement.executeUpdate();
             return read(item.getId());
         } catch (Exception e) {
@@ -121,5 +127,5 @@ public class ItemDAO implements Dao<Item> {
         }
         return null;
     }
-    }
+}
 
