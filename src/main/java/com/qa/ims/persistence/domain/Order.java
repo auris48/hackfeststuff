@@ -115,6 +115,7 @@ public class Order {
 
     public void printOrderDetails(){
         orderDetail.forEach((item, quantity) -> System.out.println(
+                " item id: " + item.getId() +
                 " item name: " + item.getItemName() +
                 " item quantity " + quantity +
                 " cost: " + (item.getItemPrice() * quantity) + "\n"));

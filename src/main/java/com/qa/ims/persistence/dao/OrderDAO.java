@@ -148,6 +148,36 @@ public class OrderDAO implements Dao<Order> {
         return 0;
     }
 
+    public Order deleteOrderItemsByID(Order order, long id) {
+        try (Connection connection = DBUtils.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement("DELETE * FROM order_items WHERE id = ? AND order_id = ?")) {
+            statement.setLong(1, id);
+            statement.setLong(2, order.getId());
+            order.setOrderDetail(readOrderDetails(order));
+            return order;
+        } catch (Exception e) {
+            LOGGER.debug(e);
+            LOGGER.error(e.getMessage());
+        }
+        return null;
+    }
+
+    public Order updateOrderItemsQuantity(Order order, long id, int quantity) {
+        try (Connection connection = DBUtils.getInstance().getConnection(); //UPDATE orders SET customer_id = ?, order_date = ?, order_dueDate = ? WHERE id = ?
+             PreparedStatement statement = connection.prepareStatement("UPDATE order_items SET item_quantity WHERE item_id = ? AND order_id = ?")) {
+            statement.setInt(1, quantity);
+            statement.setLong(2, id);
+            statement.setLong(3, order.getId());
+            order.setOrderDetail(readOrderDetails(order));
+            return order;
+        } catch (Exception e) {
+            LOGGER.debug(e);
+            LOGGER.error(e.getMessage());
+        }
+        return null;
+    }
+
+
     public Map<Item, Integer> getOrderDetails(ResultSet resultSet) throws SQLException {
         Map<Item, Integer> orderDetails = new HashMap<>();
         Long item_id = resultSet.getLong("item_id");
@@ -164,6 +194,10 @@ public class OrderDAO implements Dao<Order> {
         LocalDate orderDueDate = LocalDate.parse(resultSet.getString("order_dueDate"));;
         return new Order(id, customerID, orderDate, orderDueDate);
     }
+
+
+
+
 
     public Order readLatest() {
         try (Connection connection = DBUtils.getInstance().getConnection();

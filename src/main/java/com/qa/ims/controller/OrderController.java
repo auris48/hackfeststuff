@@ -63,6 +63,7 @@ public class OrderController implements CrudController<Order> {
         Map<Item, Integer> orderDetail = new HashMap<>();
         List<OrderDetail> orderDetailList = new ArrayList<>();
         while (adding) {
+            itemDao.readAll().forEach(item -> System.out.println(item.toString()));
             LOGGER.info("Please enter ID of item to add to the order");
             Long id = utils.getLong();
             Item item = itemDao.read(id);
@@ -70,7 +71,7 @@ public class OrderController implements CrudController<Order> {
             int quantity = utils.getInt();
             if (item.getItemStock() >= quantity) {
                 if (item.getItemStock() == quantity){
-                    itemDao.delete(item.getId());
+                    itemDao.update(item);
                     orderDetail.put(item, quantity);
                 } else{
                     item.setItemStock(item.getItemStock() - quantity);
@@ -108,8 +109,29 @@ public class OrderController implements CrudController<Order> {
         if (utils.getString().equalsIgnoreCase("Yes")) {
             System.out.println("Here are all items belonging to this order: ");
             order.printOrderDetails();
+
         }
 
+
+        return order;
+    }
+
+    public Order updateOrderDetails(Order order) {
+        LOGGER.info("Would you like to change existing item order or add more items? (Add/Change)");
+        if (utils.getString().equalsIgnoreCase("Add")){
+            addItemsToOrder(order);
+        } else {
+            LOGGER.info("Please enter item id");
+            Long itemID = utils.getLong();
+            LOGGER.info("Would you like to delete item or change quantity? (Delete/Change)");
+            if (utils.getString().equalsIgnoreCase("Delete")){
+                orderDao.deleteOrderItemsByID(order, itemID);
+            } else {
+                LOGGER.info("Enter new quantity");
+                int quantity = utils.getInt();
+                orderDao.updateOrderItemsQuantity(order, itemID, quantity);
+            }
+        }
 
         return order;
     }
