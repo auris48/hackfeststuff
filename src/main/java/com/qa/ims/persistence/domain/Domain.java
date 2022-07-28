@@ -11,7 +11,7 @@ public enum Domain {
 	STOP("To close the application");
 
 	public static final Logger LOGGER = LogManager.getLogger();
-
+//
 	private String description;
 
 	private Domain(String description) {
