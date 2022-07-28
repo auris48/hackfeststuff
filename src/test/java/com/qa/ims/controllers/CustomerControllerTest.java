@@ -1,8 +1,8 @@
 package com.qa.ims.controllers;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.qa.ims.controller.CustomerController;
 import com.qa.ims.persistence.dao.CustomerDAO;
 import com.qa.ims.persistence.domain.Customer;
@@ -50,7 +50,6 @@ public class CustomerControllerTest {
 		Mockito.when(dao.readAll()).thenReturn(customers);
 
 		assertEquals(customers, controller.readAll());
-
 		Mockito.verify(dao, Mockito.times(1)).readAll();
 	}
 
