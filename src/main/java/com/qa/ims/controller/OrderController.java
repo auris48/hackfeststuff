@@ -35,7 +35,9 @@ public class OrderController implements CrudController<Order> {
     public List<Order> readAll() {
         List<Order> Orders = orderDao.readAll();
         for (Order Order : Orders) {
+            LOGGER.info("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
             LOGGER.info(Order);
+
         }
         return Orders;
     }
@@ -45,11 +47,10 @@ public class OrderController implements CrudController<Order> {
         LOGGER.info("Please enter order customer id");
         Long customerID = utils.getLong();
         LOGGER.info("Please enter order due date");
-        LocalDate orderDueDate = LocalDate.parse(utils.getString());
+        LocalDate orderDueDate = utils.getLocalDate();
         Order order = orderDao.create(new Order(customerID, LocalDate.now(), orderDueDate));
         LOGGER.info("Would you like to add items to order? (Yes/No)");
-        String input = utils.getString();
-        if (input.equalsIgnoreCase("Yes")){
+        if (utils.getString().equalsIgnoreCase("Yes")){
             addItemsToOrder(order);
             orderDao.createOrderDetail(order);
             order.calculateOrderCost();
@@ -58,11 +59,12 @@ public class OrderController implements CrudController<Order> {
         return order;
     }
 
-    public Order addItemsToOrder(Order order) {
+    public Order
+    addItemsToOrder(Order order) {
         boolean adding = true;
 
         while (adding) {
-            itemDao.readAll().forEach(item -> System.out.println(item.toString()));
+            itemDao.readAll().forEach(item -> LOGGER.info(item.toString()));
             LOGGER.info("Please enter ID of item to add to the order");
             Long id = utils.getLong();
             Item item = itemDao.read(id);

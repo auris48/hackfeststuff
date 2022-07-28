@@ -4,11 +4,11 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
 
-public class CustomerTest {
+public class OrderTest {
 
 	@Test
 	public void testEquals() {
-		EqualsVerifier.simple().forClass(Customer.class).verify();
+		EqualsVerifier.simple().forClass(Order.class).withIgnoredFields("customerDao").verify();
 	}
 
 }

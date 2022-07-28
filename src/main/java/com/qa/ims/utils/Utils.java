@@ -1,5 +1,7 @@
 package com.qa.ims.utils;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 import org.apache.logging.log4j.LogManager;
@@ -66,4 +68,18 @@ public class Utils {
 		return intInput;
 	}
 
+
+	public LocalDate getLocalDate() {
+		String input = null;
+		LocalDate localDateInput = null;
+		do {
+			try {
+				input = getString();
+				localDateInput = LocalDate.parse(input);
+			} catch (DateTimeParseException nfe) {
+				LOGGER.info("Please enter a valid date");
+			}
+		} while (localDateInput == null);
+		return localDateInput;
+	}
 }
