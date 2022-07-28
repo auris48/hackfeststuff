@@ -21,7 +21,7 @@ public enum Domain {
 	public String getDescription() {
 		return this.name() + ": " + this.description;
 	}
-
+//asdasd
 	public static void printDomains() {
 		for (Domain domain : Domain.values()) {
 			LOGGER.info(domain.getDescription());
