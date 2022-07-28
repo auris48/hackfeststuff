@@ -2,20 +2,22 @@ package com.qa.ims.persistence.dao;
 
 import com.qa.ims.persistence.domain.Item;
 import com.qa.ims.utils.DBUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class ItemDAOTest {
 
 	private final ItemDAO DAO = new ItemDAO();
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		DBUtils.connect();
 		DBUtils.getInstance().init("src/test/resources/sql-schema.sql", "src/test/resources/sql-data.sql");
@@ -44,8 +46,6 @@ public class ItemDAOTest {
 	public void testRead() {
 		final long ID = 1L;
 		assertEquals(new Item(1L, "Toy car", LocalDate.of(2005, 04, 23), "Ferrari replica car", 100, 25.95), DAO.read(ID));
-
-
 	}
 
 	@Test

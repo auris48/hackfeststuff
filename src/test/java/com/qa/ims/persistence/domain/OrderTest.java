@@ -1,15 +1,14 @@
 package com.qa.ims.persistence.domain;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 
-public class ItemTest {
+public class OrderTest {
 
 	@Test
 	public void testEquals() {
-		EqualsVerifier.simple().forClass(Item.class).verify();
+		EqualsVerifier.simple().forClass(Order.class).withIgnoredFields("customerDao").verify();
 	}
 
 }

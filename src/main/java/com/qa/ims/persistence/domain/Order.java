@@ -6,6 +6,7 @@ import com.qa.ims.persistence.dao.ItemDAO;
 import java.sql.SQLOutput;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Order {
     private Long id;
@@ -89,8 +90,15 @@ public class Order {
 
     }
 
-    public void addToOrderDetailList(List<OrderDetail> orderDetail) {
+    public List<OrderDetail> addToOrderDetailList(
+            List<OrderDetail> orderDetail) {
         this.orderDetailList.addAll(orderDetail);
+        return orderDetailList;
+    }
+
+    public List<OrderDetail> addToOrderDetailList(OrderDetail orderDetail) {
+        this.orderDetailList.add(orderDetail);
+        return orderDetailList;
     }
 
     public void setOrderDetailList(List<OrderDetail> orderDetail) {
@@ -127,5 +135,47 @@ public class Order {
     public OrderDetail getExistingOrderDetail(Item item){
         OrderDetail orderDetail=orderDetailList.stream().filter(orderDetail1 -> Objects.equals(orderDetail1.getItem(), item)).findAny().get();
         return orderDetail;
+    }
+
+/*    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Order)) return false;
+        Order order = (Order) o;
+
+        return Double.compare(order.orderCost, orderCost) == 0 && Long.compare(id, order.id)==0
+                && Long.compare(customerID, order.customerID)==0
+                && Objects.equals(orderDate, order.orderDate)
+                && Objects.equals(orderDueDate, order.orderDueDate)
+                && orderDetailList.equals(order.getOrderDetailList());
+    }
+    */
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Order)) return false;
+        Order order = (Order) o;
+
+        if (Objects.isNull(orderDetailList)){
+            return Double.compare(order.orderCost, orderCost)
+                    == 0 && Objects.equals(id, order.id)
+                    && Objects.equals(customerID, order.customerID)
+                    && Objects.equals(orderDate, order.orderDate)
+                    && Objects.equals(orderDueDate, order.orderDueDate)
+                    && Objects.equals(orderDetailList, order.orderDetailList);
+        } else {
+            return Double.compare(order.orderCost, orderCost) == 0
+                    && Objects.equals(id, order.id)
+                    && Objects.equals(customerID, order.customerID)
+                    && Objects.equals(orderDate, order.orderDate)
+                    && Objects.equals(orderDueDate, order.orderDueDate)
+                    && orderDetailList.equals(order.getOrderDetailList());
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, customerID, orderDate, orderDueDate, orderDetailList, orderCost);
     }
 }

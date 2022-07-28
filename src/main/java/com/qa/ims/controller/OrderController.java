@@ -58,7 +58,8 @@ public class OrderController implements CrudController<Order> {
         return order;
     }
 
-    public Order addItemsToOrder(Order order) {
+    public Order
+    addItemsToOrder(Order order) {
         boolean adding = true;
 
         while (adding) {

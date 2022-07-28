@@ -1,5 +1,7 @@
 package com.qa.ims.persistence.domain;
 
+import java.util.Objects;
+
 public class OrderDetail {
 
     private Long id;
@@ -37,12 +39,23 @@ public class OrderDetail {
         return orderDetailCost;
     }
 
-    @Override
+ /*   @Override
     public String toString() {
         return  "\t\t\t\titem name:" + item.getItemName() +
                 " item id: " + item.getId() +
                 " quantity: " + quantity +
                 " cost: " + orderDetailCost;
+    }
+*/
+
+    @Override
+    public String toString() {
+        return "OrderDetail{" +
+                "id=" + id +
+                ", item=" + item +
+                ", quantity=" + quantity +
+                ", orderDetailCost=" + orderDetailCost +
+                '}';
     }
 
     public int getQuantity() {
@@ -60,7 +73,16 @@ public class OrderDetail {
         return item.getItemPrice()*quantity;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof OrderDetail)) return false;
+        OrderDetail that = (OrderDetail) o;
+        return quantity == that.quantity && Double.compare(that.orderDetailCost, orderDetailCost) == 0 && Objects.equals(id, that.id) && Objects.equals(item, that.item);
+    }
 
-
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, item, quantity, orderDetailCost);
+    }
 }
