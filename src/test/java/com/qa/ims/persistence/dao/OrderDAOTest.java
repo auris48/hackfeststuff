@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class ItemDAOTest {
+public class OrderDAOTest {
 
 	private final ItemDAO DAO = new ItemDAO();
 
