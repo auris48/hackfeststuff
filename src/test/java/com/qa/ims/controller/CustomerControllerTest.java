@@ -1,9 +1,8 @@
-package com.qa.ims.controllers;
+package com.qa.ims.controller;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import com.qa.ims.controller.CustomerController;
+
 import com.qa.ims.persistence.dao.CustomerDAO;
 import com.qa.ims.persistence.domain.Customer;
 import com.qa.ims.utils.Utils;

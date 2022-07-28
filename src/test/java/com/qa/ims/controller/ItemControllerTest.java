@@ -1,9 +1,7 @@
-package com.qa.ims.controllers;
-import com.qa.ims.controller.ItemController;
+package com.qa.ims.controller;
 import com.qa.ims.persistence.dao.ItemDAO;
 import com.qa.ims.persistence.domain.Item;
 import com.qa.ims.utils.Utils;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -53,7 +51,6 @@ public class ItemControllerTest {
 		Mockito.verify(dao, Mockito.times(1)).readAll();
 
 	}
-/*
 
 	@Test
 	public void testUpdate() {
@@ -61,9 +58,8 @@ public class ItemControllerTest {
 		Item updated = new Item(1L, "Coca-Cola", LocalDate.now(), "Cold drink", 100, 0.95);
 
 		Mockito.when(this.utils.getLong()).thenReturn(1L);
-		Mockito.when(this.utils.getString()).thenReturn(updated.getItemName());
+		Mockito.when(this.utils.getString()).thenReturn(updated.getItemName(), updated.getItemDescription());
 		Mockito.when(this.utils.getLocalDate()).thenReturn(updated.getItemStockDate());
-		Mockito.when(this.utils.getString()).thenReturn(updated.getItemDescription());
 		Mockito.when(this.utils.getInt()).thenReturn(updated.getItemStock());
 		Mockito.when(this.utils.getDouble()).thenReturn(updated.getItemPrice());
 		Mockito.when(this.dao.update(updated)).thenReturn(updated);
@@ -75,7 +71,6 @@ public class ItemControllerTest {
 		Mockito.verify(this.utils, Mockito.times(1)).getDouble();
 		Mockito.verify(this.dao, Mockito.times(1)).update(updated);
 	}
-*/
 
 	@Test
 	public void testDelete() {

@@ -98,5 +98,4 @@ class OrderDAOTest {
                         LocalDate.of(2022, 07, 28)),
                 ORDERDAO.readLatest());
     }
-
 }
