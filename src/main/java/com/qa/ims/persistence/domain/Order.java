@@ -12,7 +12,7 @@ public class Order {
     private Long customerID;
     private LocalDate orderDate;
     private LocalDate orderDueDate;
-    private Map<Item, Integer> orderDetail = new HashMap<>();
+
     private List<OrderDetail> orderDetailList = new ArrayList<>();
 
     private double orderCost;
@@ -76,7 +76,7 @@ public class Order {
     public String toString() {
         String order_items = "";
         Customer customer = customerDao.read(customerID);
-        orderDetailList.stream().mapToDouble(OrderDetail::getOrderDetailCost).sum();
+        calculateOrderCost();
         order_items+=orderDetailList.stream().map(item->item.toString()+"\n").reduce("", String::concat);
         return "id: " + id +
                 " order date: " + orderDate +
@@ -84,27 +84,16 @@ public class Order {
                 " customer name: " + customer.getFirstName() + " " + customer.getSurname() +
                 " customer ID: " + customerID + "\n" +
                 order_items +
-                "\t\t\t\t\t\t\t\t\t\t\t\ttotal cost:" + orderCost + "\n";
+                "\t\t\t\t\t\t\t\t\ttotal cost:" + orderCost + "\n";
 
 
-    }
-
-    public Map<Item, Integer> getOrderDetail() {
-        return orderDetail;
-    }
-
-
-    public void setOrderDetail(Map<Item, Integer> orderDetail) {
-        this.orderDetail.putAll(orderDetail);
     }
 
     public void addToOrderDetailList(List<OrderDetail> orderDetail) {
-        calculateOrderCost();
         this.orderDetailList.addAll(orderDetail);
     }
 
     public void setOrderDetailList(List<OrderDetail> orderDetail) {
-        calculateOrderCost();
         this.orderDetailList=orderDetail;
     }
 
@@ -117,15 +106,11 @@ public class Order {
     }
 
     public void calculateOrderCost() {
-        orderDetailList.stream().mapToDouble(OrderDetail::getOrderDetailCost).sum();
+        orderCost=orderDetailList.stream().mapToDouble(OrderDetail::getOrderDetailCost).sum();
     }
 
     public void printOrderDetails() {
-        orderDetailList.forEach(item -> System.out.println(
-                        " item id: " + item.getItem().getId() +
-                        " item name: " + item.getItem().getItemName() +
-                        " item quantity " + item.getQuantity() +
-                        " cost: " + item.getOrderDetailCost()));
+        orderDetailList.forEach(item -> System.out.println(item.toString()));
     }
 
     public List<OrderDetail> getOrderDetailList() {

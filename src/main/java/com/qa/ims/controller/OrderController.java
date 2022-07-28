@@ -10,10 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Takes in Order details for CRUD functionality
@@ -27,9 +24,9 @@ public class OrderController implements CrudController<Order> {
     private ItemDAO itemDao;
     private Utils utils;
 
-    public OrderController(OrderDAO OrderDao, Utils utils) {
+    public OrderController(OrderDAO orderDao, Utils utils) {
         super();
-        this.orderDao = OrderDao;
+        this.orderDao = orderDao;
         this.itemDao=new ItemDAO();
         this.utils = utils;
     }
@@ -50,19 +47,20 @@ public class OrderController implements CrudController<Order> {
         LOGGER.info("Please enter order due date");
         LocalDate orderDueDate = LocalDate.parse(utils.getString());
         Order order = orderDao.create(new Order(customerID, LocalDate.now(), orderDueDate));
-        LOGGER.info("Would you like to add items to order? Yes/No");
+        LOGGER.info("Would you like to add items to order? (Yes/No)");
         String input = utils.getString();
         if (input.equalsIgnoreCase("Yes")){
             addItemsToOrder(order);
             orderDao.createOrderDetail(order);
             order.calculateOrderCost();
+            orderDao.update(order);
         }
         return order;
     }
 
     public Order addItemsToOrder(Order order) {
         boolean adding = true;
-        Map<Item, Integer> orderDetail = new HashMap<>();
+
         while (adding) {
             itemDao.readAll().forEach(item -> System.out.println(item.toString()));
             LOGGER.info("Please enter ID of item to add to the order");
@@ -74,34 +72,29 @@ public class OrderController implements CrudController<Order> {
                 if (item.getItemStock() == quantity){
                     item.setItemStock(0);
                     itemDao.update(item);
-                    if (orderDetail.containsKey(item)){
-                        orderDetail.put(item, orderDetail.get(item));
-                    } else {
-                        orderDetail.put(item, quantity);
+                    if(!order.containsItemWithID(item)){
+                        order.getOrderDetailList().add(new OrderDetail(item, quantity));
+                    }else{
+                        order.getExistingOrderDetail(item).addQuantity(quantity);
                     }
                 } else{
                     item.setItemStock(item.getItemStock() - quantity);
                     itemDao.update(item);
-                    if (orderDetail.containsKey(item)){
-                        orderDetail.put(item, orderDetail.get(item));
+                    if(!order.containsItemWithID(item)){
+                        order.getOrderDetailList().add(new OrderDetail(item, quantity));
                     } else {
-                        orderDetail.put(item, quantity);
+                        order.getExistingOrderDetail(item).addQuantity(quantity);
                     }
                 }
             } else {
                 System.out.println("You're trying to order more than the stock");
             }
 
-            LOGGER.info("Would you like to add any more items? (Yes/No");
+            LOGGER.info("Would you like to add any more items? (Yes/No)");
             if (utils.getString().equalsIgnoreCase("No")) {
                 adding = false;
             }
         }
-        order.setOrderDetail(orderDetail);
-        orderDao.createOrderDetail(order);
-        order.setOrderDetail(orderDao.readOrderDetails(order));
-        order.calculateOrderCost();
-        orderDao.update(order);
         return order;
     }
 
@@ -119,15 +112,18 @@ public class OrderController implements CrudController<Order> {
         Order order = orderDao.update(new Order(id, customerID, orderStockDate, orderDueDate));
         LOGGER.info("Order updated");
         LOGGER.info("Would you like to update items belonging to order? (Yes/No)");
+        order=orderDao.read(id);
         if (utils.getString().equalsIgnoreCase("Yes")) {
             updateOrderDetails(order);
+            orderDao.createOrderDetail(order);
+            order.calculateOrderCost();
+            orderDao.update(order);
         }
 
         return order;
     }
 
     public Order updateOrderDetails(Order order) {
-
         boolean amending=true;
         while(amending){
             LOGGER.info("Would you like to change existing item order or add more items? (Add/Change)");
@@ -135,17 +131,25 @@ public class OrderController implements CrudController<Order> {
                 addItemsToOrder(order);
             } else {
                 LOGGER.info("Here are all items belonging to this order: ");
-                order.printOrderDetails();
+                System.out.println(order.getOrderDetailList());
                 LOGGER.info("Please enter item id");
                 Long itemID = utils.getLong();
                 LOGGER.info("Would you like to delete item or change quantity? (Delete/Change)");
                 if (utils.getString().equalsIgnoreCase("Delete")){
                     orderDao.deleteOrderItemsByID(order, itemID);
+                    order.setOrderDetailList(orderDao.readOrderDetails(order));
                 } else {
+                    Item item = itemDao.read(itemID);
                     LOGGER.info("Enter new quantity");
                     int quantity = utils.getInt();
-                    orderDao.updateOrderItemsQuantity(order, itemID, quantity);
-                    orderDao.update(order);
+                    if (item.getItemStock()>=quantity){
+                        orderDao.updateOrderItemsQuantity(order, itemID, quantity);
+                        item.setItemStock(item.getItemStock()-quantity);
+                        order.setOrderDetailList(orderDao.readOrderDetails(order));
+                    } else {
+                        LOGGER.info("Not enough items to change to that amount");
+                    }
+
                 }
             }
             LOGGER.info("Do you want to keep changing order items? (Yes/No)");
@@ -153,7 +157,6 @@ public class OrderController implements CrudController<Order> {
                 break;
             }
         }
-
 
         return order;
     }

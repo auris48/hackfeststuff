@@ -39,12 +39,10 @@ public class OrderDetail {
 
     @Override
     public String toString() {
-        return "OrderDetail{" +
-                "id=" + id +
-                ", item=" + item +
-                ", quantity=" + quantity +
-                ", orderDetailCost=" + orderDetailCost +
-                '}';
+        return  "\t\t\t\titem name:" + item.getItemName() +
+                " item id: " + item.getId() +
+                " quantity: " + quantity +
+                " cost: " + orderDetailCost;
     }
 
     public int getQuantity() {

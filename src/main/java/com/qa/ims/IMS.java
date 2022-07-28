@@ -3,7 +3,6 @@ package com.qa.ims;
 import com.qa.ims.controller.*;
 import com.qa.ims.persistence.dao.ItemDAO;
 import com.qa.ims.persistence.dao.OrderDAO;
-import com.qa.ims.persistence.dao.OrderDAO2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,7 +19,7 @@ public class IMS {
 
 	private final CustomerController customers;
 	private final ItemController items;
-	private final OrderController2 orders;
+	private final OrderController orders;
 	private final Utils utils;
 	private List<User> users;
 
@@ -28,10 +27,10 @@ public class IMS {
 		this.utils = new Utils();
 		final CustomerDAO custDAO = new CustomerDAO();
 		final ItemDAO itemDAO = new ItemDAO();
-		final OrderDAO2 orderDAO = new OrderDAO2();
+		final OrderDAO orderDAO = new OrderDAO();
 		this.customers = new CustomerController(custDAO, utils);
 		this.items = new ItemController(itemDAO, utils);
-		this.orders = new OrderController2(orderDAO, utils);
+		this.orders = new OrderController(orderDAO, utils);
 	}
 
 	public void imsSystem() {
