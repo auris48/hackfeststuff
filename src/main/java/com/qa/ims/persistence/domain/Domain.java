@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import com.qa.ims.utils.Utils;
 
 public enum Domain {
-
+	//Testing dev
 	CUSTOMER("Information about customers"), ITEM("Individual Items"), ORDER("Purchases of items"),
 	STOP("To close the application");
 	//
@@ -27,7 +27,7 @@ public enum Domain {
 			LOGGER.info(domain.getDescription());
 		}
 	}
-
+//comit
 	public static Domain getDomain(Utils utils) {
 		Domain domain;
 		while (true) {

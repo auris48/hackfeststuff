@@ -1,20 +1,21 @@
 package com.qa.ims.persistence.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
-import com.qa.ims.persistence.domain.Customer;
+import com.qa.ims.persistence.domain.Item;
 import com.qa.ims.utils.DBUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class CustomerDAOTest {
+public class ItemDAOTest {
 
-	private final CustomerDAO DAO = new CustomerDAO();
+	private final ItemDAO DAO = new ItemDAO();
 
 	@BeforeEach
 	public void setup() {
@@ -22,36 +23,34 @@ public class CustomerDAOTest {
 		DBUtils.getInstance().init("src/test/resources/sql-schema.sql", "src/test/resources/sql-data.sql");
 	}
 
-
 	@Test
 	public void testCreate() {
-		final Customer created = new Customer(2L, "chris", "perrins");
+		final Item created = new Item(2L, "Toy car", LocalDate.of(2005, 04, 23), "Ferrari replica car", 100, 25.95);
 		assertEquals(created, DAO.create(created));
 	}
 
-
-
 	@Test
 	public void testReadAll() {
-		List<Customer> expected = new ArrayList<>();
-		expected.add(new Customer(1L, "jordan", "harrison"));
+		List<Item> expected = new ArrayList<>();
+		expected.add(new Item(1L, "Toy car", LocalDate.of(2005, 04, 23), "Ferrari replica car", 100, 25.95));
 		assertEquals(expected, DAO.readAll());
 	}
 
 	@Test
 	public void testReadLatest() {
-		assertEquals(new Customer(1L, "jordan", "harrison"), DAO.readLatest());
+		assertEquals(new Item(1L, "Toy car", LocalDate.of(2005, 04, 23), "Ferrari replica car", 100, 25.95), DAO.readLatest());
+
 	}
 
 	@Test
 	public void testRead() {
 		final long ID = 1L;
-		assertEquals(new Customer(ID, "jordan", "harrison"), DAO.read(ID));
+		assertEquals(new Item(1L, "Toy car", LocalDate.of(2005, 04, 23), "Ferrari replica car", 100, 25.95), DAO.read(ID));
 	}
 
 	@Test
 	public void testUpdate() {
-		final Customer updated = new Customer(1L, "chris", "perrins");
+		final Item updated = new Item(1L, "Pringles", LocalDate.of(2022,07,28), "crisps", 100, 23.95D);
 		assertEquals(updated, DAO.update(updated));
 
 	}
