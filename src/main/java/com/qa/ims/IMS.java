@@ -3,6 +3,7 @@ package com.qa.ims;
 import com.qa.ims.controller.*;
 import com.qa.ims.persistence.dao.ItemDAO;
 import com.qa.ims.persistence.dao.OrderDAO;
+import com.qa.ims.persistence.dao.OrderDAO2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -11,23 +12,26 @@ import com.qa.ims.persistence.domain.Domain;
 import com.qa.ims.utils.DBUtils;
 import com.qa.ims.utils.Utils;
 
+import java.util.List;
+
 public class IMS {
 
 	public static final Logger LOGGER = LogManager.getLogger();
 
 	private final CustomerController customers;
 	private final ItemController items;
-	private final OrderController orders;
+	private final OrderController2 orders;
 	private final Utils utils;
+	private List<User> users;
 
 	public IMS() {
 		this.utils = new Utils();
 		final CustomerDAO custDAO = new CustomerDAO();
 		final ItemDAO itemDAO = new ItemDAO();
-		final OrderDAO orderDAO = new OrderDAO();
+		final OrderDAO2 orderDAO = new OrderDAO2();
 		this.customers = new CustomerController(custDAO, utils);
 		this.items = new ItemController(itemDAO, utils);
-		this.orders = new OrderController(orderDAO, utils);
+		this.orders = new OrderController2(orderDAO, utils);
 	}
 
 	public void imsSystem() {
@@ -66,9 +70,7 @@ public class IMS {
 			default:
 				break;
 			}
-
 			LOGGER.info(() ->"What would you like to do with " + domain.name().toLowerCase() + ":");
-
 			Action.printActions();
 			Action action = Action.getAction(utils);
 

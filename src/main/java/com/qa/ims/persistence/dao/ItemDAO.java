@@ -66,11 +66,6 @@ public class ItemDAO implements Dao<Item> {
         return null;
     }
 
-
-    //Read this when you wake up: there's an error here somewhere, idk why set up
-    // a breakpoint
-
-
     @Override
     public Item update(Item item) {
         try (Connection connection = DBUtils.getInstance().getConnection();
@@ -125,6 +120,8 @@ public class ItemDAO implements Dao<Item> {
             LOGGER.debug(e);
             LOGGER.error(e.getMessage());
         }
+
+
         return null;
     }
 }
