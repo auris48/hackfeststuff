@@ -1,32 +1,44 @@
 package com.qa.ims.persistence.domain;
 
-import jdk.vm.ci.meta.Local;
+import com.qa.ims.persistence.dao.CustomerDAO;
+import com.qa.ims.persistence.dao.ItemDAO;
 
+import java.sql.SQLOutput;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Order {
     private Long id;
-    private Long customer_id;
+    private Long customerID;
     private LocalDate orderDate;
     private LocalDate orderDueDate;
-    private Map<Item, Integer> orderDetail;
+
+    private List<OrderDetail> orderDetailList = new ArrayList<>();
+
     private double orderCost;
+    private CustomerDAO customerDao = new CustomerDAO();
 
     public Order(Long customer_id, LocalDate orderDate, LocalDate orderDueDate) {
-        this.customer_id=customer_id;
-        this.orderDate=orderDate;
-        this.orderDueDate=orderDueDate;
+        this.customerID = customer_id;
+        this.orderDate = orderDate;
+        this.orderDueDate = orderDueDate;
+
     }
 
 
+    public Order(Long id, Long customer_id, LocalDate orderDate, LocalDate orderDueDate) {
+        this.id = id;
+        this.customerID = customer_id;
+        this.orderDate = orderDate;
+        this.orderDueDate = orderDueDate;
+    }
 
-    public Order(Long id, String itemName, LocalDate itemStockDate, String itemDescription, int itemStock, double itemPrice) {
-        this.id=id;
-        this.customer_id=customer_id;
-        this.orderDate=orderDate;
-        this.orderDueDate=orderDueDate;
+    public Order(Long id, Long customer_id, LocalDate orderDate, LocalDate orderDueDate, Double orderCost) {
+        this.id = id;
+        this.customerID = customer_id;
+        this.orderDate = orderDate;
+        this.orderDueDate = orderDueDate;
+        this.orderCost = orderCost;
     }
 
     public Long getId() {
@@ -37,12 +49,12 @@ public class Order {
         this.id = id;
     }
 
-    public Long getCustomer_id() {
-        return customer_id;
+    public Long getCustomerID() {
+        return customerID;
     }
 
     public void setCustomer_id(Long customer_id) {
-        this.customer_id = customer_id;
+        this.customerID = customer_id;
     }
 
     public LocalDate getOrderDate() {
@@ -62,11 +74,58 @@ public class Order {
     }
 
     public String toString() {
-        return " id: " + id +
-                " order date: "  + orderDate  +
-                " order due date:  " + orderDueDate +
-                " customer name: " + "placeholder";
+        String order_items = "";
+        Customer customer = customerDao.read(customerID);
+        calculateOrderCost();
+        order_items+=orderDetailList.stream().map(item->item.toString()+"\n").reduce("", String::concat);
+        return "id: " + id +
+                " order date: " + orderDate +
+                " order due date: " + orderDueDate +
+                " customer name: " + customer.getFirstName() + " " + customer.getSurname() +
+                " customer ID: " + customerID + "\n" +
+                order_items +
+                "\t\t\t\t\t\t\t\t\ttotal cost:" + orderCost + "\n";
+
 
     }
 
+    public void addToOrderDetailList(List<OrderDetail> orderDetail) {
+        this.orderDetailList.addAll(orderDetail);
+    }
+
+    public void setOrderDetailList(List<OrderDetail> orderDetail) {
+        this.orderDetailList=orderDetail;
+    }
+
+    public double getOrderCost() {
+        return orderCost;
+    }
+
+    public void setOrderCost(double orderCost) {
+        this.orderCost = orderCost;
+    }
+
+    public void calculateOrderCost() {
+        orderCost=orderDetailList.stream().mapToDouble(OrderDetail::getOrderDetailCost).sum();
+    }
+
+    public void printOrderDetails() {
+        orderDetailList.forEach(item -> System.out.println(item.toString()));
+    }
+
+    public List<OrderDetail> getOrderDetailList() {
+        return orderDetailList;
+    }
+
+    public boolean containsItemWithID(Item item){
+        return   orderDetailList
+                .stream()
+                .anyMatch(orderDetail1 ->  orderDetail1.getItem().getId()==item.getId());
+
+    }
+
+    public OrderDetail getExistingOrderDetail(Item item){
+        OrderDetail orderDetail=orderDetailList.stream().filter(orderDetail1 -> Objects.equals(orderDetail1.getItem(), item)).findAny().get();
+        return orderDetail;
+    }
 }

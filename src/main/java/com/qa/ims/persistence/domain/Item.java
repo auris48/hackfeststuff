@@ -97,7 +97,7 @@ public class Item {
     public String toString() {
         return " id: " + id +
                 " item name: "  + itemName  +
-                " item stock date:  " + itemStockDate +
+                " item stock date: " + itemStockDate +
                 " item description: " + itemDescription +
                 " item stock " + itemStock +
                 " item price: " + itemPrice;
