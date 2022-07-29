@@ -1,5 +1,6 @@
 package com.qa.ims.persistence.dao;
 
+import com.qa.ims.persistence.domain.Item;
 import com.qa.ims.persistence.domain.Order;
 import com.qa.ims.persistence.domain.OrderDetail;
 import com.qa.ims.utils.DBUtils;
@@ -9,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -129,7 +131,7 @@ public class OrderDAO implements Dao<Order> {
             }
 
         } else {
-            existantOrderDetailsInSQL.forEach(item->updateOrderItemsQuantity(order, item.getItem().getId(), item.getQuantity()));
+            existantOrderDetailsInSQL.forEach(item -> updateOrderItemsQuantity(order, item.getItem().getId(), item.getQuantity()));
         }
     }
 
@@ -217,6 +219,16 @@ public class OrderDAO implements Dao<Order> {
             statement.setLong(1, id);
             statement.setLong(2, order.getId());
             statement.executeUpdate();
+            List<Object> itemFromOrderDetail = order.getOrderDetailList()
+                    .stream()
+                    .filter(orderDetail -> orderDetail.getItem().getId() == id)
+                    .map(orderDetail -> Arrays.asList(orderDetail.getItem(), orderDetail.getQuantity()))
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
+
+            Item item = (Item) itemFromOrderDetail.get(0);
+            item.setItemStock(item.getItemStock()+(Integer) itemFromOrderDetail.get(1));
+            new ItemDAO().update(item);
             order.setOrderDetailList(readOrderDetails(order));
             return order;
         } catch (Exception e) {

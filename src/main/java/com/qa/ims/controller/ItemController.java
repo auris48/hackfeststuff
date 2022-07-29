@@ -3,6 +3,7 @@ package com.qa.ims.controller;
 import com.qa.ims.persistence.dao.ItemDAO;
 import com.qa.ims.persistence.domain.Item;
 import com.qa.ims.utils.Utils;
+import dnl.utils.text.table.TextTable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,11 +29,13 @@ public class ItemController implements CrudController<Item> {
 
 	@Override
 	public List<Item> readAll() {
-		List<Item> Items = itemDao.readAll();
-		for (Item Item : Items) {
+
+		List<Item> items = itemDao.readAll();
+
+		for (Item Item : items) {
 			LOGGER.info(Item);
 		}
-		return Items;
+		return items;
 	}
 
 	@Override
@@ -56,7 +59,7 @@ public class ItemController implements CrudController<Item> {
 		Long id = utils.getLong();
 		LOGGER.info("Please enter item name");
 		String itemName = utils.getString();
-		LOGGER.info("Please enter item stock date");
+		LOGGER.info("Please enter new item stock date");
 		LocalDate itemStockDate = utils.getLocalDate();
 		LOGGER.info("Please enter item description");
 		String itemDescription=utils.getString();;

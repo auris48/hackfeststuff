@@ -35,7 +35,7 @@ public class OrderController implements CrudController<Order> {
     public List<Order> readAll() {
         List<Order> Orders = orderDao.readAll();
         for (Order Order : Orders) {
-            LOGGER.info("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            LOGGER.info("------------------------------------------------------------------------------------------------------------");
             LOGGER.info(Order);
 
         }
@@ -89,7 +89,7 @@ public class OrderController implements CrudController<Order> {
                     }
                 }
             } else {
-                System.out.println("You're trying to order more than the stock");
+                LOGGER.info("You're trying to order more than the stock");
             }
 
             LOGGER.info("Would you like to add any more items? (Yes/No)");
@@ -105,11 +105,11 @@ public class OrderController implements CrudController<Order> {
     public Order update() {
         LOGGER.info("Please enter the id of the order you would like to update");
         Long id = utils.getLong();
-        LOGGER.info("Please enter customer id");
+        LOGGER.info("Please enter new customer id");
         Long customerID = utils.getLong();
-        LOGGER.info("Please enter order stock date");
+        LOGGER.info("Please enter new order stock date");
         LocalDate orderStockDate = LocalDate.parse(utils.getString());
-        LOGGER.info("Please enter order due date");
+        LOGGER.info("Please enter new order due date");
         LocalDate orderDueDate = LocalDate.parse(utils.getString());;
         Order order = orderDao.update(new Order(id, customerID, orderStockDate, orderDueDate));
         LOGGER.info("Order updated");
@@ -133,7 +133,7 @@ public class OrderController implements CrudController<Order> {
                 addItemsToOrder(order);
             } else {
                 LOGGER.info("Here are all items belonging to this order: ");
-                System.out.println(order.getOrderDetailList());
+                order.printOrderDetails();
                 LOGGER.info("Please enter item id");
                 Long itemID = utils.getLong();
                 LOGGER.info("Would you like to delete item or change quantity? (Delete/Change)");
@@ -165,8 +165,14 @@ public class OrderController implements CrudController<Order> {
 
     @Override
     public int delete() {
-        LOGGER.info("Please enter the id of the Order you would like to delete");
+        LOGGER.info("Please enter the id of the order you would like to delete");
         Long id = utils.getLong();
+        Order order = orderDao.read(id);
+        order.getOrderDetailList().forEach(orderDetail -> {
+            Item item = orderDetail.getItem();
+            item.setItemStock(item.getItemStock()+orderDetail.getQuantity());
+            itemDao.update(item);
+        });
         return orderDao.delete(id);
     }
 }

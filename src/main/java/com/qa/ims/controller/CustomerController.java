@@ -1,7 +1,9 @@
 package com.qa.ims.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import dnl.utils.text.table.TextTable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,9 +34,11 @@ public class CustomerController implements CrudController<Customer> {
 	@Override
 	public List<Customer> readAll() {
 		List<Customer> customers = customerDAO.readAll();
+
 		for (Customer customer : customers) {
 			LOGGER.info(customer);
 		}
+
 		return customers;
 	}
 

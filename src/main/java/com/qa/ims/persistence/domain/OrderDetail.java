@@ -17,7 +17,6 @@ public class OrderDetail {
     }
 
     public OrderDetail(Item item, int quantity) {
-        this.id = id;
         this.item = item;
         this.quantity = quantity;
         orderDetailCost=item.getItemPrice()*quantity;
@@ -39,23 +38,14 @@ public class OrderDetail {
         return orderDetailCost;
     }
 
- /*   @Override
-    public String toString() {
-        return  "\t\t\t\titem name:" + item.getItemName() +
-                " item id: " + item.getId() +
-                " quantity: " + quantity +
-                " cost: " + orderDetailCost;
-    }
-*/
-
     @Override
     public String toString() {
         return
                 "[item id: " + item.getId() +
-                "item name:" + item.getItemName()+
-                "item price: " + item.getItemName()+
-                "item quantity: "       + quantity +
-                "cost: " + orderDetailCost +
+                " item name:" + item.getItemName()+
+                " item price: " + item.getItemPrice()+
+                " item quantity: "       + quantity +
+                " cost: " + orderDetailCost +
                 "]";
 
     }

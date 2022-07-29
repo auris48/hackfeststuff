@@ -85,7 +85,7 @@ public class Order {
                 " customer name: " + customer.getFirstName() + " " + customer.getSurname() +
                 " customer ID: " + customerID + "\n" +
                 order_items +
-                "\t\t\t\t\t\t\t\t\ttotal cost:" + orderCost + "\n";
+                "total cost:" + orderCost + "\n";
 
 
     }
@@ -133,23 +133,11 @@ public class Order {
     }
 
     public OrderDetail getExistingOrderDetail(Item item){
-        OrderDetail orderDetail=orderDetailList.stream().filter(orderDetail1 -> Objects.equals(orderDetail1.getItem(), item)).findAny().get();
+        OrderDetail orderDetail=orderDetailList.stream().filter(orderDetail1 ->
+                orderDetail1.getItem().getId()==item.getId()).findAny().get();
         return orderDetail;
     }
 
-/*    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Order)) return false;
-        Order order = (Order) o;
-
-        return Double.compare(order.orderCost, orderCost) == 0 && Long.compare(id, order.id)==0
-                && Long.compare(customerID, order.customerID)==0
-                && Objects.equals(orderDate, order.orderDate)
-                && Objects.equals(orderDueDate, order.orderDueDate)
-                && orderDetailList.equals(order.getOrderDetailList());
-    }
-    */
 
     @Override
     public boolean equals(Object o) {
