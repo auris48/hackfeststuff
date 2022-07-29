@@ -45,7 +45,7 @@ the item was deleted. If I try to read an item with that ID again I should not b
 They also test how you're comparing objects, you need to make sure that two objects with the same values
 are equal for example.
 
-For that JUNIT tests classes that deal with database directly. 
+So for this project the unit tests, test classes that deal with the database directly. 
 
 I've used JUNIT 5 for my unit tests.  
 
