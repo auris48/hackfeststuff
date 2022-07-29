@@ -1,4 +1,5 @@
-USE ims;
+create database if not exists `ims`;
+use `ims`;
 
 CREATE TABLE IF NOT EXISTS `orders` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,

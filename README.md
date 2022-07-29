@@ -21,6 +21,11 @@ generate/download sources.
 
 Afterwards run mvn package and again update folders/sources.
 
+You will also need MySQL 8 to establish a local server to store the database. 
+
+The schema provided in the main resources folder should create the database, if not, you might have
+to run the script manually in your workbench. 
+
 ## Running the tests
 
 To run the tests, type in mvn test in your IDE's Git Terminal, you might have to enable that.
