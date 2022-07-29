@@ -50,7 +50,7 @@ public class OrderDAO implements Dao<Order> {
                     order.setOrderDetailList(readOrderDetails(order));
                     orders.add(order);
                 }
-                ;
+
 
                 return orders;
             }
@@ -149,7 +149,6 @@ public class OrderDAO implements Dao<Order> {
                     if (resultSet.getInt("ITEMS") > 0) {
                         orderDetailList.add(orderDetail);
                     }
-                    ;
                 }
 
             }
@@ -239,7 +238,7 @@ public class OrderDAO implements Dao<Order> {
     }
 
     public Order updateOrderItemsQuantity(Order order, long id, int quantity) {
-        try (Connection connection = DBUtils.getInstance().getConnection(); //UPDATE orders SET customer_id = ?, order_date = ?, order_dueDate = ? WHERE id = ?
+        try (Connection connection = DBUtils.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement("UPDATE order_items SET item_quantity = ? WHERE item_id = ? AND order_id = ?")) {
             statement.setInt(1, quantity);
             statement.setLong(2, id);
@@ -270,7 +269,7 @@ public class OrderDAO implements Dao<Order> {
         Long customerID = resultSet.getLong("customer_id");
         LocalDate orderDate = LocalDate.parse(resultSet.getString("order_date"));
         LocalDate orderDueDate = LocalDate.parse(resultSet.getString("order_dueDate"));
-        ;
+
         Double orderCost = resultSet.getDouble("order_cost");
         return new Order(id, customerID, orderDate, orderDueDate, orderCost);
     }

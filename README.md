@@ -1,66 +1,66 @@
-Coverage: 34%
+Coverage: 63%
 # IMS-Starter
 
-The project 
+A CLI CRUD application developed in Java that uses a MYSQL database to manage orders, customers and items.
 
 ## Getting Started
-
+These instructions will get you a copy of the project up and running on your local machine for development
+and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+You'll need - Java version 8 and a command line interface to run the file.
 
-You will need Ja
-
+For development, you'll need to install Maven 3.8.6 and have a compatible IDE.
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
+To get the development environment running, clone the repository from GitHub. And in your IDE, import the project
+as a maven project. This should be detected automatically anyway, if not, right click .pom file and 
+generate/download sources.
 
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
+Afterwards run mvn package and again update folders/sources.
 
 ## Running the tests
 
-Explain how to run the automated tests for this system. Break down into which tests and what they do
+To run the tests, type in mvn test in your IDE's Git Terminal, you might have to enable that.
+Alternatively, right click on java folder and run JUNIT tests that way or each file in test folder.
 
 ### Unit Tests 
 
-Explain what these tests test, why and how to run them
+The unit tests mainly test that the object that is retrieved from the database will match the expected object. 
+When certain functions are performed on it.
 
-```
-Give an example
-```
+They mainly test that the classes and SQL database work together in unison and data integrity is preserved.
+
+They also test whether database functions work, so if I want to delete an item for example
+it should check the database, see that it contains the item and then return the id of that item to signify
+the item was deleted. If I try to read an item with that ID again I should not be able to. 
+
+They also test how you're comparing objects, you need to make sure that two objects with the same values
+are equal for example.
+
+For that JUNIT tests classes that deal with database directly. 
+
+I've used JUNIT 5 for my unit tests.  
 
 ### Integration Tests 
-Explain what these tests test, why and how to run them
 
-```
-Give an example
-```
+The integration tests check whether classes/methods work in the expected manner. This would typically need to be
+done on the controller classes as they manage integration between SQL and the data. 
 
-### And coding style tests
+I've used Mockito to generate Mock methods and modelled expected behavior and output.
 
-Explain what these tests test and why
-
-```
-Give an example
-```
+For example when user enters details to create an object, this object should be returned from another class. That
+would deal with the database itself
 
 ## Deployment
 
-Add additional notes about how to deploy this on a live system
+To deploy this project simply execute the jar with dependencies file from the Fat Jar folder in repositories.
+
+Open CMD, type in java -jar ims-0.0.1-jar-with-dependencies.jar And this should run the system.
+
+To deploy the project from a development environment, go to Terminal and type in mvn install. 
 
 ## Built With
 
@@ -68,11 +68,11 @@ Add additional notes about how to deploy this on a live system
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning.
+We use [Git] for versioning.
 
 ## Authors
 
-* **Chris Perrins** - *Initial work* - [christophperrins](https://github.com/christophperrins)
+* **Aurimas Pilnikovas** - *Initial work* - [aurimaspilnikovas](https://github.com/auris48)
 
 ## License
 
@@ -82,6 +82,4 @@ This project is licensed under the MIT license - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+StackOverflow and all colleagues/trainers at QA. 

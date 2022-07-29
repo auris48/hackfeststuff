@@ -11,7 +11,6 @@ public enum Domain {
 	STOP("To close the application");
 
 	public static final Logger LOGGER = LogManager.getLogger();
-
 	private String description;
 
 	private Domain(String description) {
@@ -21,13 +20,13 @@ public enum Domain {
 	public String getDescription() {
 		return this.name() + ": " + this.description;
 	}
-//asdasd
+
 	public static void printDomains() {
 		for (Domain domain : Domain.values()) {
 			LOGGER.info(domain.getDescription());
 		}
 	}
-//comit
+
 	public static Domain getDomain(Utils utils) {
 		Domain domain;
 		while (true) {
