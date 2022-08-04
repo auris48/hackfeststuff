@@ -1,6 +1,7 @@
 package com.qa.ims;
 
 import com.qa.ims.controller.*;
+import com.qa.ims.persistence.dao.DriverDAO;
 import com.qa.ims.persistence.dao.ItemDAO;
 import com.qa.ims.persistence.dao.OrderDAO;
 import org.apache.logging.log4j.LogManager;
@@ -20,6 +21,7 @@ public class IMS {
 	private final CustomerController customers;
 	private final ItemController items;
 	private final OrderController orders;
+	private final DriverController drivers;
 	private final Utils utils;
 	private List<User> users;
 
@@ -28,9 +30,11 @@ public class IMS {
 		final CustomerDAO custDAO = new CustomerDAO();
 		final ItemDAO itemDAO = new ItemDAO();
 		final OrderDAO orderDAO = new OrderDAO();
+		final DriverDAO driverDAO = new DriverDAO();
 		this.customers = new CustomerController(custDAO, utils);
 		this.items = new ItemController(itemDAO, utils);
 		this.orders = new OrderController(orderDAO, utils);
+		this.drivers = new DriverController(driverDAO, utils);
 	}
 
 	public void imsSystem() {
@@ -63,6 +67,9 @@ public class IMS {
 				break;
 			case ORDER:
 				active = this.orders;
+				break;
+			case DRIVER:
+				active = this.drivers;
 				break;
 			case STOP:
 				return;
