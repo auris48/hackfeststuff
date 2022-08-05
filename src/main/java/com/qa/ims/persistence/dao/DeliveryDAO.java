@@ -1,20 +1,14 @@
 package com.qa.ims.persistence.dao;
 
-import com.qa.ims.persistence.domain.Driver;
-import com.qa.ims.persistence.domain.Item;
 import com.qa.ims.persistence.domain.Delivery;
-import com.qa.ims.persistence.domain.DeliveryDetail;
 import com.qa.ims.persistence.domain.Order;
 import com.qa.ims.utils.DBUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class DeliveryDAO implements Dao<Delivery> {
@@ -75,7 +69,7 @@ public class DeliveryDAO implements Dao<Delivery> {
         return null;
     }
 
-    public DeliveryDetail createDeliveryDetail(Delivery delivery) {
+    public Delivery createDeliveryDetail(Delivery delivery) {
         List<Order> nonExistantOrders = checkIfOrderExists(delivery);
 
         try (Connection connection = DBUtils.getInstance().getConnection();
@@ -104,7 +98,7 @@ public class DeliveryDAO implements Dao<Delivery> {
 
         try (Connection connection = DBUtils.getInstance().getConnection();
              PreparedStatement statement = connection
-                     .prepareStatement("SELECT COUNT() AS ORDERS FROM delivery_orders WHERE order_id=? AND delivery_id=?")) {
+                     .prepareStatement("SELECT COUNT(delivery_id) AS ORDERS FROM delivery_orders WHERE order_id=? AND delivery_id=?")) {
             for (Order order : delivery.getOrders()) {
                 statement.setLong(1, order.getId());
                 statement.setLong(2, delivery.getId());
@@ -148,7 +142,7 @@ public class DeliveryDAO implements Dao<Delivery> {
              PreparedStatement statement = connection
                      .prepareStatement("UPDATE delivery SET driver_id = ? WHERE id = ?")) {
             statement.setLong(1, delivery.getDriver().getId());
-            statement.setLong(5, delivery.getId());
+            statement.setLong(2, delivery.getId());
             statement.executeUpdate();
             return read(delivery.getId());
         } catch (Exception e) {
@@ -172,24 +166,14 @@ public class DeliveryDAO implements Dao<Delivery> {
         return 0;
     }
 
-    public Delivery deleteDeliveryItemsByID(Delivery Delivery, long id) {
+    public Delivery deleteDeliveryItemsByID(Delivery delivery, long id) {
         try (Connection connection = DBUtils.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement("DELETE FROM delivery_orders WHERE item_id = ? AND Delivery_id = ?")) {
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM delivery_orders WHERE order_id = ? AND delivery_id = ?")) {
             statement.setLong(1, id);
-            statement.setLong(2, Delivery.getId());
+            statement.setLong(2, delivery.getId());
             statement.executeUpdate();
-            List<Object> itemFromDeliveryDetail = createDeliveryDetail().getOrders()
-                    .stream()
-                    .filter(DeliveryDetail -> DeliveryDetail.getItem().getId() == id)
-                    .map(DeliveryDetail -> Arrays.asList(DeliveryDetail.getItem(), DeliveryDetail.getQuantity()))
-                    .flatMap(List::stream)
-                    .collect(Collectors.toList());
-
-            Item item = (Item) itemFromDeliveryDetail.get(0);
-            item.setItemStock(item.getItemStock() + (Integer) itemFromDeliveryDetail.get(1));
-            new ItemDAO().update(item);
-            Delivery.setDeliveryDetailList(readDeliveryDetails(Delivery));
-            return Delivery
+            delivery.setOrders(readDeliveryDetail(delivery));
+            return delivery;
         } catch (Exception e) {
             LOGGER.debug(e);
             LOGGER.error(e.getMessage());
@@ -216,7 +200,7 @@ public class DeliveryDAO implements Dao<Delivery> {
     public Delivery readLatest() {
         try (Connection connection = DBUtils.getInstance().getConnection();
              Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery("SELECT * FROM delivery Delivery BY id DESC LIMIT 1")) {
+             ResultSet resultSet = statement.executeQuery("SELECT * FROM delivery ORDER BY id DESC LIMIT 1")) {
             resultSet.next();
             return modelFromResultSet(resultSet);
         } catch (Exception e) {

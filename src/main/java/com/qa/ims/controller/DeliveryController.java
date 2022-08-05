@@ -48,16 +48,13 @@ public class DeliveryController implements CrudController<Delivery> {
     public Delivery create() {
         LOGGER.info("Do you want to add a driver? (Yes/No)");
         Delivery delivery = new Delivery();
-        if (utils.getString().equals("Yes")){
-            LOGGER.info("Please enter driver id:");
-            delivery.setDriver(driverDAO.read(utils.getLong()));
-        }
 
-        LOGGER.info("Would you like to add orders to delivery? (Yes/No)");
         if (utils.getString().equalsIgnoreCase("Yes")) {
-            addOrdersToDelivery(delivery);
-            deliveryDAO.createDeliveryDetail(delivery);
+            LOGGER.info("Please enter driver id:");
+            Long driverID = utils.getLong();
+            delivery.setDriver(driverDAO.read(driverID));
         }
+        delivery = deliveryDAO.create(delivery);
         return delivery;
     }
 
@@ -69,42 +66,43 @@ public class DeliveryController implements CrudController<Delivery> {
             LOGGER.info("Please enter ID of order to add to the delivery");
             Long id = utils.getLong();
             Order order = orderDao.read(id);
+                if (!delivery.containsOrderWithID(order)) {
+                      delivery.addToOrderList(order);
+                } else{
+                    LOGGER.info("Order already has been added");
+                }
 
-            if (delivery.containsOrderWithID(order)) {
-                delivery.addToOrderList(order);
-            } else
-                LOGGER.info("Order already has been added");
-            }
-            LOGGER.info("Would you like to add any more orders? (Yes/No)");
-            if (utils.getString().equalsIgnoreCase("No")) {
-                adding = false;
-            }
-        return delivery;
+
+        LOGGER.info("Would you like to add any more orders? (Yes/No)");
+        if (utils.getString().equalsIgnoreCase("No")) {
+            adding = false;
         }
+        }
+        return delivery;
+    }
 
     @Override
     public Delivery update() {
         LOGGER.info("Please enter the id of the delivery you would like to update");
         Long id = utils.getLong();
         LOGGER.info("Please enter new driver");
-        Delivery delivery = deliveryDAO.update(new Delivery(id, driverDAO.read(id)));
+        Long driverID = utils.getLong();
+        Delivery delivery = deliveryDAO.update(new Delivery(id, driverDAO.read(driverID)));
         LOGGER.info("Delivery updated");
         LOGGER.info("Would you like to update orders belonging to this delivery? (Yes/No)");
         delivery = deliveryDAO.read(id);
         if (utils.getString().equalsIgnoreCase("Yes")) {
-            updateOrderDetails(order);
-            orderDao.createOrderDetail(order);
-            order.calculateOrderCost();
-            orderDao.update(order);
+            updateOrderDetails(delivery);
+            deliveryDAO.createDeliveryDetail(delivery);
         }
 
-        return order;
+        return delivery;
     }
 
-    public Order updateOrderDetails(Delivery delivery) {
+    public Delivery updateOrderDetails(Delivery delivery) {
         boolean amending = true;
         while (amending) {
-            LOGGER.info("Would you like to change existing item order or add more items? (Add/Change)");
+            LOGGER.info("Would you like to change existing  order or add more orders? (Add/Change)");
             if (utils.getString().equalsIgnoreCase("Add")) {
                 addOrdersToDelivery(delivery);
             } else {
@@ -112,22 +110,10 @@ public class DeliveryController implements CrudController<Delivery> {
                 delivery.getOrders().stream().forEach(System.out::println);
                 LOGGER.info("Please enter order id");
                 Long orderID = utils.getLong();
-                LOGGER.info("Would you like to delete item or change quantity? (Delete/Change)");
+                LOGGER.info("Would you like to delete order or change id? (Delete/Change)");
                 if (utils.getString().equalsIgnoreCase("Delete")) {
-                    orderDao.deleteOrderItemsByID(order, itemID);
-                    order.setOrderDetailList(orderDao.readOrderDetails(order));
-                } else {
-                    Item item = itemDao.read(itemID);
-                    LOGGER.info("Enter new quantity");
-                    int quantity = utils.getInt();
-                    if (item.getItemStock() >= quantity) {
-                        orderDao.updateOrderItemsQuantity(order, itemID, quantity);
-                        item.setItemStock(item.getItemStock() - quantity);
-                        order.setOrderDetailList(orderDao.readOrderDetails(order));
-                    } else {
-                        LOGGER.info("Not enough items to change to that amount");
-                    }
-
+                    deliveryDAO.deleteDeliveryItemsByID(delivery, orderID);
+                    delivery.setOrders(deliveryDAO.readDeliveryDetail(delivery));
                 }
             }
             LOGGER.info("Do you want to keep changing order items? (Yes/No)");
@@ -136,24 +122,13 @@ public class DeliveryController implements CrudController<Delivery> {
             }
         }
 
-        return order;
+        return delivery;
     }
 
     @Override
     public int delete() {
-        LOGGER.info("Please enter the id of the order you would like to delete");
+        LOGGER.info("Please enter the id of the delivery you would like to delete");
         Long id = utils.getLong();
-        Order order = orderDao.read(id);
-
-        //Checking for nullity to pass a Mockito test, otherwise I'd need test both add order
-        //to database and delete at the same time.
-        if (order!=null)
-            order.getOrderDetailList().forEach(orderDetail -> {
-                Item item = orderDetail.getItem();
-                item.setItemStock(item.getItemStock() + orderDetail.getQuantity());
-                itemDao.update(item);
-            });
-
         return orderDao.delete(id);
     }
 }

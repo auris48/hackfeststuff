@@ -1,13 +1,10 @@
 package com.qa.ims;
 
 import com.qa.ims.controller.*;
-import com.qa.ims.persistence.dao.DriverDAO;
-import com.qa.ims.persistence.dao.ItemDAO;
-import com.qa.ims.persistence.dao.OrderDAO;
+import com.qa.ims.persistence.dao.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.qa.ims.persistence.dao.CustomerDAO;
 import com.qa.ims.persistence.domain.Domain;
 import com.qa.ims.utils.DBUtils;
 import com.qa.ims.utils.Utils;
@@ -17,16 +14,18 @@ import java.util.List;
 public class IMS {
 
 	public static final Logger LOGGER = LogManager.getLogger();
-
+	private final DeliveryController delivery;
 	private final CustomerController customers;
 	private final ItemController items;
 	private final OrderController orders;
 	private final DriverController drivers;
+
 	private final Utils utils;
 	private List<User> users;
 
 	public IMS() {
 		this.utils = new Utils();
+		final DeliveryDAO deliveryDAO = new DeliveryDAO();
 		final CustomerDAO custDAO = new CustomerDAO();
 		final ItemDAO itemDAO = new ItemDAO();
 		final OrderDAO orderDAO = new OrderDAO();
@@ -35,6 +34,7 @@ public class IMS {
 		this.items = new ItemController(itemDAO, utils);
 		this.orders = new OrderController(orderDAO, utils);
 		this.drivers = new DriverController(driverDAO, utils);
+		this.delivery = new DeliveryController(orderDAO, deliveryDAO, new DriverDAO(), utils);
 	}
 
 	public void imsSystem() {
@@ -70,6 +70,9 @@ public class IMS {
 				break;
 			case DRIVER:
 				active = this.drivers;
+				break;
+			case DELIVERY:
+				active = this.delivery;
 				break;
 			case STOP:
 				return;

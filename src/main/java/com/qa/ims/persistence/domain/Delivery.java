@@ -1,5 +1,6 @@
 package com.qa.ims.persistence.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -9,7 +10,7 @@ public class Delivery {
     private List<Order> orders;
 
     public Delivery() {
-
+        this.orders = new ArrayList<>();
     }
 
     public Delivery(Long id, List<Order> orders, Driver driver) {
@@ -23,13 +24,10 @@ public class Delivery {
         this.driver = driver;
     }
 
-    public Delivery(DeliveryDetail deliveryDetail) {
-        this.orders = orders;
-    }
-
     public Delivery(Long id, Driver driver) {
-        this.id=id;
-        this.driver=driver;
+        this.id = id;
+        this.driver = driver;
+        this.orders = new ArrayList<>();
     }
 
     public Long getId() {
@@ -67,9 +65,21 @@ public class Delivery {
         this.driver = driver;
     }
 
-    public boolean containsOrderWithID(Order order){
-        return   orders.stream()
-                .anyMatch(order1 ->  order1.getId()==order.getId());
+    public boolean containsOrderWithID(Order order) {
+        if (this.orders.isEmpty() || orders==null) {
+            return false;
+        } else {
+            return this.orders.stream()
+                    .anyMatch(orders -> orders.getId() == order.getId());
+        }
+    }
 
+    @Override
+    public String toString() {
+        return "Delivery{" +
+                "id=" + id +
+                ", driver=" + driver +
+                ", orders=" + orders +
+                '}';
     }
 }
