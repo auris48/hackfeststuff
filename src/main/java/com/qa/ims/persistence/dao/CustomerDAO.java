@@ -19,8 +19,10 @@ public class CustomerDAO implements Dao<Customer> {
 		Long id = resultSet.getLong("id");
 		String firstName = resultSet.getString("first_name");
 		String surname = resultSet.getString("surname");
-
-		return new Customer(id, firstName, surname);
+		String address = resultSet.getString("address");
+		String postcode = resultSet.getString("postcode");
+		String phone = resultSet.getString("phone");
+		return new Customer(id, firstName, surname, address, postcode, phone);
 	}
 
 	/**
@@ -67,9 +69,13 @@ public class CustomerDAO implements Dao<Customer> {
 	public Customer create(Customer customer) {
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				PreparedStatement statement = connection
-						.prepareStatement("INSERT INTO customers(first_name, surname) VALUES (?, ?)");) {
+						.prepareStatement("INSERT INTO customers(first_name, surname, address, postcode, phone) VALUES (?, ?, ?, ?, ?)");) {
 			statement.setString(1, customer.getFirstName());
 			statement.setString(2, customer.getSurname());
+			statement.setString(3, customer.getAddress());
+			statement.setString(4, customer.getPostcode());
+			statement.setString(5, customer.getPhone());
+
 			statement.executeUpdate();
 			return readLatest();
 		} catch (Exception e) {
@@ -106,10 +112,13 @@ public class CustomerDAO implements Dao<Customer> {
 	public Customer update(Customer customer) {
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				PreparedStatement statement = connection
-						.prepareStatement("UPDATE customers SET first_name = ?, surname = ? WHERE id = ?");) {
+						.prepareStatement("UPDATE customers SET first_name = ?, surname = ?, address = ?, postcode = ?, phone = ? WHERE id = ?");) {
 			statement.setString(1, customer.getFirstName());
 			statement.setString(2, customer.getSurname());
-			statement.setLong(3, customer.getId());
+			statement.setString(3, customer.getAddress());
+			statement.setString(4, customer.getPostcode());
+			statement.setString(5, customer.getPhone());
+			statement.setLong(6, customer.getId());
 			statement.executeUpdate();
 			return read(customer.getId());
 		} catch (Exception e) {

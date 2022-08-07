@@ -1,9 +1,11 @@
 package com.qa.ims.persistence.domain;
 
+
+
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Item {
+public class Item extends DomainType{
 
     private Long id;
     private String itemName;
@@ -20,6 +22,14 @@ public class Item {
         this.itemPrice = itemPrice;
     }
 
+    public Item(String[] data) {
+        this.id=Long.parseLong(data[0]);
+        this.itemName=data[1];
+        this.itemStockDate= LocalDate.parse(data[2]);
+        this.itemDescription=data[3];
+        this.itemStock=Integer.getInteger(data[4]);
+        this.itemPrice=Double.parseDouble(data[5]);
+    }
 
     public Item(Long id, String itemName, LocalDate itemStockDate, String itemDescription, int itemStock, double itemPrice) {
         this.id = id;
@@ -28,6 +38,14 @@ public class Item {
         this.itemDescription = itemDescription;
         this.itemStock = itemStock;
         this.itemPrice = itemPrice;
+    }
+
+    public Item() {
+
+    }
+
+    public static String[] getAllFields(){
+        return new String[]{"id", "Item Name", "Item Stock Date", "Item Description", "Item Stock", "Item Price"};
     }
 
     public Long getId() {
@@ -92,12 +110,11 @@ public class Item {
 
     @Override
     public String toString() {
-        return " id: " + id +
-                " item name: " + itemName +
-                " item stock date: " + itemStockDate +
-                " item description: " + itemDescription +
-                " item stock " + itemStock +
-                " item price: " + itemPrice;
+        return  id + "," + itemName +
+                "," + itemStockDate +
+                "," + itemDescription +
+                "," + itemStock +
+                "," + itemPrice;
     }
 
     public int getItemStock() {
@@ -106,5 +123,10 @@ public class Item {
 
     public void setItemStock(int itemStock) {
         this.itemStock = itemStock;
+    }
+
+    @Override
+    public String[] getFields() {
+        return new String[]{"id", "Item Name", "Item Stock Date", "Item Description", "Item Stock", "Item Price"};
     }
 }
