@@ -101,29 +101,6 @@ public class MainFrame extends JFrame {
         Arrays.stream(data).forEach(datum -> tblModel.addRow(datum));
         return tblModel;
     }
-/*
-    public DefaultTableModel createTableModel(Dao dao, Class object) throws NoSuchMethodException {
-
-        DefaultTableModel tblModel = new DefaultTableModel();
-        Field[] fields = object.getDeclaredFields();
-
-        Arrays.stream(fields).forEach(field -> tblModel.addColumn(field.getName()));
-
-
-        Object[][] data = dao
-                .readAll()
-                .stream()
-                .map(entry -> new Object[]{Arrays.stream(fields).forEach(field -> try {object.getClass().getMethod(field.getName()).invoke(object).toString();}
-                                                    catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                                                    e.printStackTrace();}
-                }))
-                .toArray(size -> new Object[size][tblModel.getColumnCount()]);
-
-
-        Arrays.stream(data).forEach(datum -> tblModel.addRow(datum));
-        return tblModel;
-    }
-*/
 
     public JTable getTblCustomers() {
         return tblCustomers;
