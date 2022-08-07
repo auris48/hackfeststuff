@@ -85,24 +85,4 @@ public class MainFrame extends JFrame {
         return customerModel;
     }
 
-    public DefaultTableModel updateTable() {
-
-        DefaultTableModel tblModel = new DefaultTableModel();
-        Field[] fields = Customer.class.getDeclaredFields();
-        Arrays.stream(fields).forEach(field -> tblModel.addColumn(field.getName()));
-        Object[][] data =
-                new CustomerDAO()
-                        .readAll()
-                        .stream()
-                        .map(customer ->
-                                new Object[]{customer.getId(), customer.getFirstName(), customer.getSurname(), customer.getAddress(), customer.getPostcode(), customer.getPhone()})
-                        .toArray(size -> new Object[size][tblModel.getColumnCount()]);
-
-        Arrays.stream(data).forEach(datum -> tblModel.addRow(datum));
-        return tblModel;
-    }
-
-    public JTable getTblCustomers() {
-        return tblCustomers;
-    }
 }
