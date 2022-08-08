@@ -25,10 +25,10 @@ public class Item extends DomainType{
     public Item(String[] data) {
         this.id=Long.parseLong(data[0]);
         this.itemName=data[1];
-        this.itemStockDate= LocalDate.parse(data[2]);
+        this.itemStockDate= LocalDate.parse(data[2]) == null ? LocalDate.ofEpochDay(0) : LocalDate.parse(data[2]);
         this.itemDescription=data[3];
-        this.itemStock=Integer.getInteger(data[4]);
-        this.itemPrice=Double.parseDouble(data[5]);
+        this.itemStock=Integer.getInteger(data[4]) == null ? 0 : Integer.getInteger(data[4]);
+        this.itemPrice=Objects.isNull(Double.parseDouble(data[5])) ? 0D : Double.parseDouble(data[5]);
     }
 
     public Item(Long id, String itemName, LocalDate itemStockDate, String itemDescription, int itemStock, double itemPrice) {
@@ -126,7 +126,7 @@ public class Item extends DomainType{
     }
 
     @Override
-    public String[] getFields() {
-        return new String[]{"id", "Item Name", "Item Stock Date", "Item Description", "Item Stock", "Item Price"};
+    public Object[] getFields() {
+        return new Object[]{id, itemName, itemStockDate, itemDescription, itemStock, itemPrice};
     }
 }

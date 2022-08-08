@@ -1,4 +1,5 @@
 package com.qa.ims.GUI;
+
 import com.qa.ims.persistence.dao.CustomerDAO;
 import com.qa.ims.persistence.dao.Dao;
 import com.qa.ims.persistence.domain.Customer;
@@ -14,25 +15,28 @@ import java.util.List;
 
 enum Domain {CUSTOMER, ITEM, DRIVER, ORDER, DELIVERY};
 
-public class MyDefaultTableModel<T extends DomainType> extends DefaultTableModel{
+public class MyDefaultTableModel<T extends DomainType> extends DefaultTableModel {
     private final Dao dao;
     private List<T> list;
     private Domain domain;
 
     public MyDefaultTableModel(Dao dao, Domain domain) {
         this.dao = dao;
-        this.domain=domain;
+        this.domain = domain;
+    }
 
+    public void deleteRecord(int i) {
+        removeRow(i);
     }
 
     @Override
     public boolean isCellEditable(int row, int column) {
-        return column!=0;
+        return column != 0;
     }
 
-    public MyDefaultTableModel createTable(){
-        list=dao.readAll();
-        switch (domain){
+    public MyDefaultTableModel createTable() {
+        list = dao.readAll();
+        switch (domain) {
             case CUSTOMER:
                 this.setColumnIdentifiers(Customer.getAllFields());
                 break;
@@ -45,20 +49,21 @@ public class MyDefaultTableModel<T extends DomainType> extends DefaultTableModel
         }
 
         Object[][] data = list.stream().map
-                (entry->entry.toString().split(","))
-                .toArray(size->new Object[list.size()][size]);
+                        (entry -> entry.toString().split(","))
+                .toArray(size -> new Object[list.size()][size]);
 
         for (Object[] datum : data) {
+
             addRow(datum);
         }
         return this;
     }
 
-    public void addRecord(T t){
+    public void addRecord(T t) {
         addRow(t.toString().split(","));
     }
 
-    public void updateTable(){
+    public void updateTable() {
         setRowCount(0);
         createTable();
     }

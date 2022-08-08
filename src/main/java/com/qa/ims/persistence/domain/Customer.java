@@ -119,12 +119,12 @@ public class Customer extends DomainType {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, surname, postcode, address, phone);
+        return Objects.hash(id, firstName, surname,  address, postcode, phone);
     }
 
     @Override
-    public String[] getFields() {
-        return new String[]{"id", "Name", "Surname", "Address", "Postcode", "Phone"};
+    public Object[] getFields() {
+        return new Object[]{id, firstName, surname, address, postcode, phone};
     }
 
     public static String[] getAllFields(){

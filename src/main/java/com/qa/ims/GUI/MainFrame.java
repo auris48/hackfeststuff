@@ -1,21 +1,22 @@
 package com.qa.ims.GUI;
-
-
 import com.qa.ims.persistence.dao.CustomerDAO;
 import com.qa.ims.persistence.dao.ItemDAO;
 import com.qa.ims.persistence.domain.Customer;
 import com.qa.ims.persistence.domain.Item;
-
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumn;
 import java.awt.event.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.lang.reflect.Field;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Properties;
+import org.jdesktop.swingx.*;
+import org.jdesktop.swingx.table.DatePickerCellEditor;
+import org.jdatepicker.*;
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
 
 public class MainFrame extends JFrame {
     private JPanel mainPanel;
@@ -51,8 +52,19 @@ public class MainFrame extends JFrame {
         tblCustomers.setModel(customerModel);
         tblItems.setModel(itemModel);
         tblCustomers.getModel().addTableModelListener(new MyTableModelListener(tblCustomers));
-
+        tblItems.getModel().addTableModelListener(new MyTableModelListener(tblItems));
         tblCustomers.setComponentPopupMenu(popupMenu);
+        UtilDateModel model = new UtilDateModel();
+        Properties p = new Properties();
+        p.put("text.today", "Today");
+        p.put("text.month", "Month");
+        p.put("text.year", "Year");
+        DatePickerCellEditor dateEditor=new DatePickerCellEditor();
+        dateEditor.setFormats(new SimpleDateFormat("YYYY-MM-DD"));
+        JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
+        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+        TableColumn dateColumn = tblItems.getColumn("Item Stock Date");
+        dateColumn.setCellEditor(dateEditor);
 
         addCustomerButton.addActionListener(new ActionListener() {
             @Override
@@ -67,11 +79,33 @@ public class MainFrame extends JFrame {
         deleteCustomerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Arrays.stream(tblCustomers.getSelectedRows()).forEach(row -> new CustomerDAO().delete(Long.parseLong((String) tblCustomers.getValueAt(row, 0))));
                 int firstRow = Arrays.stream(tblCustomers.getSelectedRows()).min().orElse(Integer.MIN_VALUE);
                 int lastRow = Arrays.stream(tblCustomers.getSelectedRows()).max().orElse(Integer.MAX_VALUE);
+                System.out.println(firstRow+":"+lastRow);
+                for (int i = lastRow; i >=firstRow; i--) {
+                    customerModel.getDao().delete(Long.parseLong((String) customerModel.getValueAt(i, 0)));
+                    customerModel.removeRow(i);
+                }
                 customerModel.fireTableRowsDeleted(firstRow, lastRow);
-                customerModel.updateTable();
+                repaint();
+            }
+        });
+
+
+        btnAddItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int row = itemModel.getRowCount();
+                itemModel.addRow(new ItemDAO().create(new Item()).toString().split(","));
+                itemModel.fireTableRowsInserted(row, row);
+            }
+        });
+        tblItems.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                int row = tblItems.rowAtPoint(e.getPoint());
+                int col = tblItems.columnAtPoint(e.getPoint());
             }
         });
     }

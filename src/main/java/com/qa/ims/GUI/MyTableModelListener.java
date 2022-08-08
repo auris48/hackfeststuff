@@ -8,6 +8,7 @@ import com.qa.ims.persistence.domain.Item;
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import java.util.Arrays;
 
 public class MyTableModelListener implements TableModelListener {
 
@@ -27,19 +28,22 @@ public class MyTableModelListener implements TableModelListener {
         int index = e.getColumn();
         switch (e.getType()) {
             case TableModelEvent.UPDATE:
-
                 table.getColumnCount();
-                Object[] data = new Object[table.getColumnCount()];
+                String[] data = new String[table.getColumnCount()];
+
                 for (int i = 0; i < table.getColumnCount(); i++) {
-                    data[i] = table.getValueAt(firstRow, i);
+                    data[i] = (String) table.getValueAt(firstRow, i);
                 }
+
                 if (tableModel.getDomain().equals(Domain.CUSTOMER)) {
-                    new CustomerDAO().update(new Customer((String[]) data));
-                } else if (tableModel.getDomain().equals(Domain.CUSTOMER)){
-                    new ItemDAO().update(new Item((String[]) data));
+                    new CustomerDAO().update(new Customer(data));
+                } else if (tableModel.getDomain().equals(Domain.ITEM)){
+                    new ItemDAO().update(new Item(data));
                 }
-
+                break;
+            case TableModelEvent.DELETE:
+                break;
         }
-
     }
+
 }
